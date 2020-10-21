@@ -1,4 +1,4 @@
-﻿using Studio.Scripts.Live.Serializers;
+﻿using Rokoko.Serializers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Actor : MonoBehaviour
 {
+    [SerializeField] private SkinnedMeshRenderer meshRenderer = null;
+
     private Animator animator;
     private Dictionary<HumanBodyBones, Transform> humanBones = new Dictionary<HumanBodyBones, Transform>();
 
@@ -39,6 +41,9 @@ public class Actor : MonoBehaviour
     {
         this.gameObject.name = actorFrame.name;
         UpdateSkeleton(actorFrame.body);
+
+        if (meshRenderer != null)
+            meshRenderer.material.color = actorFrame.color.ToColor();
     }
 
     private void UpdateSkeleton(BodyFrame bodyFrame)

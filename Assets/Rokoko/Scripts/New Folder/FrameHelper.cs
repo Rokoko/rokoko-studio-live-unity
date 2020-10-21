@@ -1,4 +1,4 @@
-﻿using Studio.Scripts.Live.Serializers;
+﻿using Rokoko.Serializers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -141,5 +141,12 @@ public static class FrameHelper
         }
 
         return null;
+    }
+
+    public static Color ToColor(this int[] color)
+    {
+        if (color.Length != 3)
+            return Color.white;
+        return new Color((float)color[0] / 255f, (float)color[1] / 255f, (float)color[2] / 255f);
     }
 }
