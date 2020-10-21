@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Studio.Scripts.Live.Serializers
 {
-
     #region Data Structs
 
     [System.Serializable]
@@ -11,16 +10,9 @@ namespace Studio.Scripts.Live.Serializers
     {
         // Header
         public float version;
-        // This is for later syncing
-        public float timecode;
         // Target fps
         public float fps;
-
-        // Live objects
-        public SceneFrame Live;
-
-        // Playback objects
-        public SceneFrame Playback;
+        public SceneFrame scene;
     }
 
     [System.Serializable]
@@ -32,10 +24,10 @@ namespace Studio.Scripts.Live.Serializers
     }
 
     [System.Serializable]
-    public class ActorFrame
+    public struct ActorFrame
     {
         public string name;
-        public byte[] color;
+        public int[] color;
         public Meta meta;
         public Dimensions dimensions;
 
@@ -46,6 +38,8 @@ namespace Studio.Scripts.Live.Serializers
         public struct Meta
         {
             public bool hasGloves;
+            public bool hasLeftGlove;
+            public bool hasRightGlove;
             public bool hasBody;
             public bool hasFace;
         }
@@ -56,14 +50,13 @@ namespace Studio.Scripts.Live.Serializers
             public float totalHeight;
             public float hipHeight;
         }
-
     }
 
     [System.Serializable]
     public class PropFrame
     {
         public string name;
-        public byte[] color;
+        public int[] color;
         public int type;
         public Vector3Frame position;
         public Vector4Frame rotation;
