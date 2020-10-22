@@ -31,6 +31,8 @@ public class PrefabInstancer<T, P> where P : MonoBehaviour
 
     public IEnumerable Values => objects.Values;
 
+    public int Count => objects.Count;
+
     public void Remove(T key)
     {
         if (!ContainsKey(key)) return;

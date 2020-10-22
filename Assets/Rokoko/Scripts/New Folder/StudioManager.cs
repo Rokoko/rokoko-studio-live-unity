@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class StudioManager : MonoBehaviour
 {
+    private const string ACTOR_DEMO_IDLE_NAME = "ActorIdle";
+
     private StudioReceiver studioReceiver;
     public Actor actorPrefab;
     public Prop propPrefab;
@@ -60,12 +62,28 @@ public class StudioManager : MonoBehaviour
         }
 
         ClearUnusedPlaybacks(frame);
+
+        if (actors.Count == 0 && props.Count == 0)
+        {
+            actors[ACTOR_DEMO_IDLE_NAME].CreateIdle(ACTOR_DEMO_IDLE_NAME);
+        }
+        else if (actors.Count == 1 && actors.ContainsKey(ACTOR_DEMO_IDLE_NAME))
+        {
+
+        }
+        else
+        {
+            actors.Remove(ACTOR_DEMO_IDLE_NAME);
+        }
     }
 
     private void ClearUnusedPlaybacks(LiveFrame_v4 frame)
     {
         foreach (Actor actor in new List<Actor>((IEnumerable<Actor>)actors.Values))
         {
+            // Don't remove idle demo
+            if (actor.actorName == ACTOR_DEMO_IDLE_NAME) continue;
+
             if (!HasFrameActor(frame, actor.actorName))
                 actors.Remove(actor.actorName);
         }

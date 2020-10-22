@@ -145,7 +145,7 @@ public static class FrameHelper
 
     public static Color ToColor(this int[] color)
     {
-        if (color.Length != 3)
+        if (color == null || color.Length != 3)
             return Color.white;
         return new Color((float)color[0] / 255f, (float)color[1] / 255f, (float)color[2] / 255f);
     }

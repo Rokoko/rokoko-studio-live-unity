@@ -10,6 +10,7 @@ namespace Rokoko
     {
         private const int HEAD_TO_MATERIAL_INDEX = 5;
         private const int JOINT_TO_MATERIAL_INDEX = 1;
+
         public string actorName { get; private set; }
 
         [SerializeField] private Renderer meshRenderer = null;
@@ -21,6 +22,7 @@ namespace Rokoko
         private Animator animator;
         private Material[] meshMaterials;
 
+        #region Initialize
 
         private void Awake()
         {
@@ -55,6 +57,10 @@ namespace Rokoko
             meshRenderer.materials = meshMaterials;
         }
 
+        #endregion
+
+        #region Public Methods
+
         public void UpdateActor(ActorFrame actorFrame)
         {
             actorName = actorFrame.name;
@@ -79,6 +85,16 @@ namespace Rokoko
             // Update material color and visibility
             UpdateMaterialColors(actorFrame);
         }
+
+        public void CreateIdle(string actorName)
+        {
+            this.actorName = actorName;
+            face.gameObject.SetActive(false);
+        }
+
+        #endregion
+
+        #region Internal Logic
 
         private void UpdateMaterialColors(ActorFrame actorFrame)
         {
@@ -105,5 +121,8 @@ namespace Rokoko
             humanBones[bone].position = jointFrame.position.ToVector3();
             humanBones[bone].rotation = jointFrame.rotation.ToQuaternion();
         }
+
+        #endregion
+
     }
 }
