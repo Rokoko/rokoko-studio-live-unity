@@ -13,7 +13,6 @@ public class PrefabPool<T> where T : MonoBehaviour
     public PrefabPool(T prefab, Transform container)
     {
         this.prefab = prefab;
-        prefab.gameObject.SetActive(false);
         this.container = container;
 
         for (int i = 0; i < poolNumber; i++)

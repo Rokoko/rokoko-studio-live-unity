@@ -57,16 +57,17 @@ namespace Rokoko.CommandAPI
 
         private IEnumerator SendRequestEnum(string endpoint, string json, TaskCompletionSource<string> task)
         {
-            var postHeader = new Dictionary<string, string>();
+            Dictionary<string, string> postHeader = new Dictionary<string, string>();
             postHeader.Add("Content-Type", "application/json");
-            var url = $"http://{IP}:{port}/v1/{apiKey}/{endpoint}";
+            string url = $"http://{IP}:{port}/v1/{apiKey}/{endpoint}";
             if (debug)
             {
                 Debug.Log("Sending request: " + url);
                 Debug.Log("Sending data: " + json);
             }
+
             // convert json string to byte
-            var formData = System.Text.Encoding.UTF8.GetBytes(json);
+            byte[] formData = System.Text.Encoding.UTF8.GetBytes(json);
             UnityWebRequest request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
             UploadHandlerRaw uploadHandler = new UploadHandlerRaw(formData);
             request.uploadHandler = uploadHandler;
@@ -74,23 +75,37 @@ namespace Rokoko.CommandAPI
             request.SetRequestHeader("Content-Type", "application/json");
             yield return request.SendWebRequest();
 
-            var body = request.downloadHandler.text;
+            string body = request.downloadHandler.text;
             if (request.isNetworkError)
             {
                 if (debug)
-                {
                     Debug.LogWarning($"There was an error sending request: {request.error}\n{body}");
-                }
-                task.SetResult(body);
+                OnCommmandError(request.error);
             }
             else
             {
                 if (debug)
-                {
                     Debug.Log($"Response: {request.responseCode}: {body}");
-                }
-                task.SetResult(body);
+                OnCommmandResponse(JsonUtility.FromJson<ResponseMessage>(body));
             }
+            task.SetResult(body);
         }
+
+        protected virtual void OnCommmandResponse(ResponseMessage response)
+        {
+
+        }
+
+        protected virtual void OnCommmandError(string error)
+        {
+
+        }
+    }
+
+    [System.Serializable]
+    public class ResponseMessage
+    {
+        public string description;
+        public string response_code;
     }
 }

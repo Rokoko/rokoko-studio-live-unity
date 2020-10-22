@@ -10,10 +10,11 @@ public class StudioManager : MonoBehaviour
 {
     private const string ACTOR_DEMO_IDLE_NAME = "ActorIdle";
 
-    private StudioReceiver studioReceiver;
+    public int receivePort = 14043;
     public Actor actorPrefab;
     public Prop propPrefab;
 
+    private StudioReceiver studioReceiver;
     private PrefabInstancer<string, Actor> actors;
     private PrefabInstancer<string, Prop> props;
 
@@ -23,6 +24,7 @@ public class StudioManager : MonoBehaviour
     void Start()
     {
         studioReceiver = new StudioReceiver();
+        studioReceiver.receivePortNumber = receivePort;
         studioReceiver.Initialize();
         studioReceiver.StartListening();
         studioReceiver.onStudioDataReceived += StudioReceiver_onStudioDataReceived;
