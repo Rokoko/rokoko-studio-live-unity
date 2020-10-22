@@ -8,27 +8,21 @@ namespace Rokoko
     [RequireComponent(typeof(Animator))]
     public class Actor : MonoBehaviour
     {
-        private const int HEAD_TO_MATERIAL_INDEX = 5;
-        private const int JOINT_TO_MATERIAL_INDEX = 1;
-
         public string actorName { get; private set; }
 
-        [SerializeField] private Renderer meshRenderer = null;
-        [SerializeField] private Face face = null;
-        [SerializeField] private Material bodyMaterial = null;
-        [SerializeField] private Material invisibleMaterial = null;
+        [SerializeField] protected Renderer meshRenderer = null;
+        [SerializeField] protected Face face = null;
 
-        private Dictionary<HumanBodyBones, Transform> humanBones = new Dictionary<HumanBodyBones, Transform>();
-        private Animator animator;
-        private Material[] meshMaterials;
+        protected Dictionary<HumanBodyBones, Transform> humanBones = new Dictionary<HumanBodyBones, Transform>();
+        protected Animator animator;
+        protected Material[] meshMaterials;
 
         #region Initialize
 
-        private void Awake()
+        protected virtual void Awake()
         {
             animator = this.GetComponent<Animator>();
             InitializeBodyBones();
-            InitializeMaterials();
         }
 
         // Cache the bone transforms
@@ -41,27 +35,11 @@ namespace Rokoko
             }
         }
 
-        private void InitializeMaterials()
-        {
-            // Clone the material, so not to affect other objects
-            bodyMaterial = Material.Instantiate(bodyMaterial);
-            meshMaterials = new Material[meshRenderer.materials.Length];
-            for (int i = 0; i < meshMaterials.Length; i++)
-            {
-                // Keep joint material as source
-                if (i == JOINT_TO_MATERIAL_INDEX)
-                    meshMaterials[i] = meshRenderer.materials[i];
-                else
-                    meshMaterials[i] = bodyMaterial;
-            }
-            meshRenderer.materials = meshMaterials;
-        }
-
         #endregion
 
         #region Public Methods
 
-        public void UpdateActor(ActorFrame actorFrame)
+        public virtual void UpdateActor(ActorFrame actorFrame)
         {
             actorName = actorFrame.name;
             this.gameObject.name = actorName;
@@ -81,12 +59,9 @@ namespace Rokoko
             // Update face from data
             if (actorFrame.meta.hasFace)
                 face.UpdateFace(actorFrame.face);
-
-            // Update material color and visibility
-            UpdateMaterialColors(actorFrame);
         }
 
-        public void CreateIdle(string actorName)
+        public virtual void CreateIdle(string actorName)
         {
             this.actorName = actorName;
             face.gameObject.SetActive(false);
@@ -96,16 +71,7 @@ namespace Rokoko
 
         #region Internal Logic
 
-        private void UpdateMaterialColors(ActorFrame actorFrame)
-        {
-            bodyMaterial.color = actorFrame.color.ToColor();
-            meshMaterials[HEAD_TO_MATERIAL_INDEX] = (actorFrame.meta.hasFace) ? invisibleMaterial : bodyMaterial;
-            meshRenderer.materials = meshMaterials;
-
-            face.SetColor(actorFrame.color.ToColor());
-        }
-
-        private void UpdateSkeleton(BodyFrame bodyFrame)
+        protected void UpdateSkeleton(BodyFrame bodyFrame)
         {
             foreach (HumanBodyBones bone in System.Enum.GetValues(typeof(HumanBodyBones)))
             {
@@ -116,7 +82,7 @@ namespace Rokoko
             }
         }
 
-        private void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame)
+        protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame)
         {
             humanBones[bone].position = jointFrame.position.ToVector3();
             humanBones[bone].rotation = jointFrame.rotation.ToQuaternion();
