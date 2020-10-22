@@ -8,6 +8,8 @@ namespace Rokoko
     public class Prop : MonoBehaviour
     {
         public string propName { get; private set; }
+        public Space positionSpace = Space.Self;
+        public Space rotationSpace = Space.Self;
 
         private MeshRenderer meshRenderer;
 
@@ -20,8 +22,17 @@ namespace Rokoko
         {
             propName = propFrame.name;
             this.gameObject.name = propName;
-            this.transform.position = propFrame.position.ToVector3();
-            this.transform.rotation = propFrame.rotation.ToQuaternion();
+
+            if (positionSpace == Space.World)
+                this.transform.position = propFrame.position.ToVector3();
+            else
+                this.transform.localPosition = propFrame.position.ToVector3();
+
+            Quaternion worldRotation = propFrame.rotation.ToQuaternion();
+            if (rotationSpace == Space.World)
+                this.transform.rotation = worldRotation;
+            else
+                this.transform.rotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
 
             if (meshRenderer != null)
                 meshRenderer.material.color = propFrame.color.ToColor();

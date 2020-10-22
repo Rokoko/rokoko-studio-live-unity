@@ -2,6 +2,7 @@
 using Rokoko.RemoteAPI;
 using Rokoko.Serializers;
 using Rokoko.Threading;
+using Rokoko.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,10 +11,18 @@ public class StudioManager : MonoBehaviour
 {
     private const string ACTOR_DEMO_IDLE_NAME = "ActorIdle";
 
+    [Header("Network")]
     public int receivePort = 14043;
+
+    [Header("Default Actors")]
     public Actor actorPrefab;
     public Prop propPrefab;
+    public bool showDefaultActorWhenNoData = true;
 
+    [Header("UI")]
+    public UIHierarchyManager uiManager;
+
+    private ActorOverrides actorOverrides;
     private StudioReceiver studioReceiver;
     private PrefabInstancer<string, Actor> actors;
     private PrefabInstancer<string, Prop> props;
@@ -21,7 +30,7 @@ public class StudioManager : MonoBehaviour
     #region MonoBehaviour
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         studioReceiver = new StudioReceiver();
         studioReceiver.receivePortNumber = receivePort;
@@ -31,6 +40,12 @@ public class StudioManager : MonoBehaviour
 
         actors = new PrefabInstancer<string, Actor>(actorPrefab, this.transform);
         props = new PrefabInstancer<string, Prop>(propPrefab, this.transform);
+
+        actorOverrides = this.GetComponent<ActorOverrides>();
+        if (actorOverrides == null || actorOverrides.actorOverrides.Count == 0)
+        {
+            Debug.Log("No custom characters found. Will generate scene from default ones");
+        }
     }
 
     private void OnDestroy()
@@ -49,71 +64,86 @@ public class StudioManager : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Main process logic of live data
+    /// </summary>
     private void ProcessLiveFrame(LiveFrame_v4 frame)
     {
+        // Update each actor from live data
         for (int i = 0; i < frame.scene.actors.Length; i++)
         {
             ActorFrame actorFrame = frame.scene.actors[i];
-            actors[actorFrame.name].UpdateActor(actorFrame);
+
+            Actor overrideActor = actorOverrides?.GetActorOverride(actorFrame.name);
+            // Update custom actor if any
+            if (overrideActor != null)
+                overrideActor.UpdateActor(actorFrame);
+            // Update default actor
+            else
+                actors[actorFrame.name].UpdateActor(actorFrame);
         }
 
+        // Update each prop from live data
         for (int i = 0; i < frame.scene.props.Length; i++)
         {
             PropFrame propFrame = frame.scene.props[i];
             props[propFrame.name].UpdateProp(propFrame);
         }
 
-        ClearUnusedPlaybacks(frame);
+        // Remove all default Actors that doesn't exist in data 
+        ClearUnusedDefaultActors(frame);
 
+        // Show default character
+        UpdateDefaultActorWhenIdle();
+
+
+        // Update Hierarchy UI
+        uiManager?.UpdateHierarchy(frame);
+    }
+
+    /// <summary>
+    /// Show default T pose character when not playback data 
+    /// </summary>
+    private void UpdateDefaultActorWhenIdle()
+    {
+        if (!showDefaultActorWhenNoData) return;
+
+        // Crate default actor
         if (actors.Count == 0 && props.Count == 0)
         {
             actors[ACTOR_DEMO_IDLE_NAME].CreateIdle(ACTOR_DEMO_IDLE_NAME);
         }
+        // No need to update
         else if (actors.Count == 1 && actors.ContainsKey(ACTOR_DEMO_IDLE_NAME))
         {
 
         }
+        // Remove default actor when playback data available
         else
         {
             actors.Remove(ACTOR_DEMO_IDLE_NAME);
         }
     }
 
-    private void ClearUnusedPlaybacks(LiveFrame_v4 frame)
+    /// <summary>
+    /// Remove all default Actors that doesn't exist in data 
+    /// </summary>
+    private void ClearUnusedDefaultActors(LiveFrame_v4 frame)
     {
         foreach (Actor actor in new List<Actor>((IEnumerable<Actor>)actors.Values))
         {
             // Don't remove idle demo
-            if (actor.actorName == ACTOR_DEMO_IDLE_NAME) continue;
+            if (actor.profileName == ACTOR_DEMO_IDLE_NAME) continue;
 
-            if (!HasFrameActor(frame, actor.actorName))
-                actors.Remove(actor.actorName);
+            if (!frame.HasProfile(actor.profileName))
+                actors.Remove(actor.profileName);
         }
 
         foreach (Prop prop in new List<Prop>((IEnumerable<Prop>)props.Values))
         {
-            if (!HasFrameProp(frame, prop.propName))
+            if (!frame.HasProp(prop.propName))
                 props.Remove(prop.propName);
         }
     }
 
-    private bool HasFrameActor(LiveFrame_v4 frame, string actorName)
-    {
-        for (int i = 0; i < frame.scene.actors.Length; i++)
-        {
-            if (frame.scene.actors[i].name == actorName)
-                return true;
-        }
-        return false;
-    }
-
-    private bool HasFrameProp(LiveFrame_v4 frame, string propName)
-    {
-        for (int i = 0; i < frame.scene.props.Length; i++)
-        {
-            if (frame.scene.props[i].name == propName)
-                return true;
-        }
-        return false;
-    }
 }

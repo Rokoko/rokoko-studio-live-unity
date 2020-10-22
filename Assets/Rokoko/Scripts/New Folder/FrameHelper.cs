@@ -277,4 +277,40 @@ public static class FrameHelper
         tongueOut = 51,
         size = 52
     }
+
+    public static void DestroyChildren(this Transform transform)
+    {
+        List<Transform> children = new List<Transform>();
+        foreach (Transform child in transform)
+            children.Add(child);
+
+        foreach (Transform child in children)
+            GameObject.Destroy(child.gameObject);
+    }
+
+    /// <summary>
+    /// Check if actor name is present in live data
+    /// </summary>
+    public static bool HasProfile(this LiveFrame_v4 frame, string profileName)
+    {
+        for (int i = 0; i < frame.scene.actors.Length; i++)
+        {
+            if (frame.scene.actors[i].name == profileName)
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Check if prop name is present in live data
+    /// </summary>
+    public static bool HasProp(this LiveFrame_v4 frame, string propName)
+    {
+        for (int i = 0; i < frame.scene.props.Length; i++)
+        {
+            if (frame.scene.props[i].name == propName)
+                return true;
+        }
+        return false;
+    }
 }

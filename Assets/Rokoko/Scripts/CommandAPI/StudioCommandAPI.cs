@@ -25,11 +25,12 @@ namespace Rokoko.CommandAPI
         protected override void OnCommmandError(string error)
         {
             base.OnCommmandError(error);
-            SetStatusText($"{error}\nPlease make sure Rokoko Studio is running and Command API is enabled (Menu->Settings->Command API->Enabled)");
+            SetStatusText($"{error}. Please make sure Rokoko Studio is running and Command API is enabled (Menu->Settings->Command API->Enabled)");
         }
 
         private void SetStatusText(string text)
         {
+            responseText.transform.parent.gameObject.SetActive(!string.IsNullOrEmpty(text));
             responseText.text = text;
             LayoutRebuilder.ForceRebuildLayoutImmediate(responseText.transform.parent as RectTransform);
         }

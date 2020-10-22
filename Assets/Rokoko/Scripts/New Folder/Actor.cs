@@ -8,10 +8,17 @@ namespace Rokoko
     [RequireComponent(typeof(Animator))]
     public class Actor : MonoBehaviour
     {
-        public string actorName { get; private set; }
+        public Space positionSpace = Space.Self;
+        public Space rotationSpace = Space.Self;
 
+        public string profileName { get; private set; }
+
+        [Header("Actor")]
         [SerializeField] protected Renderer meshRenderer = null;
+
+        [Header("Actor Face (Optional)")]
         [SerializeField] protected Face face = null;
+        [SerializeField] protected bool autoHideFaceWhenInactive = true;
 
         protected Dictionary<HumanBodyBones, Transform> humanBones = new Dictionary<HumanBodyBones, Transform>();
         protected Animator animator;
@@ -41,8 +48,8 @@ namespace Rokoko
 
         public virtual void UpdateActor(ActorFrame actorFrame)
         {
-            actorName = actorFrame.name;
-            this.gameObject.name = actorName;
+            profileName = actorFrame.name;
+            this.gameObject.name = profileName;
 
             bool updateBody = actorFrame.meta.hasBody || actorFrame.meta.hasGloves;
 
@@ -54,17 +61,20 @@ namespace Rokoko
                 UpdateSkeleton(actorFrame.body);
 
             // Enable/Disable face renderer
-            face.gameObject.SetActive(actorFrame.meta.hasFace);
+            if (autoHideFaceWhenInactive)
+                face?.gameObject.SetActive(actorFrame.meta.hasFace);
 
             // Update face from data
             if (actorFrame.meta.hasFace)
-                face.UpdateFace(actorFrame.face);
+                face?.UpdateFace(actorFrame.face);
         }
 
         public virtual void CreateIdle(string actorName)
         {
-            this.actorName = actorName;
-            face.gameObject.SetActive(false);
+            this.profileName = actorName;
+
+            if (autoHideFaceWhenInactive)
+                face?.gameObject.SetActive(false);
         }
 
         #endregion
@@ -78,14 +88,27 @@ namespace Rokoko
                 if (bone == HumanBodyBones.LastBone) break;
                 ActorJointFrame? boneFrame = bodyFrame.GetBoneFrame(bone);
                 if (boneFrame != null)
-                    UpdateBone(bone, boneFrame.Value);
+                    UpdateBone(bone, boneFrame.Value, bone == HumanBodyBones.Hips);
             }
         }
 
-        protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame)
+        protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame, bool updatePosition)
         {
-            humanBones[bone].position = jointFrame.position.ToVector3();
-            humanBones[bone].rotation = jointFrame.rotation.ToQuaternion();
+            if (updatePosition)
+            {
+                if (positionSpace == Space.World)
+                    humanBones[bone].position = jointFrame.position.ToVector3();
+                else
+                    humanBones[bone].localPosition = jointFrame.position.ToVector3();
+
+            }
+
+            Quaternion worldRotation = jointFrame.rotation.ToQuaternion();
+            if (rotationSpace == Space.World)
+                humanBones[bone].rotation = worldRotation;
+            else
+                humanBones[bone].localRotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
+            //humanBones[bone].localRotation = jointFrame.rotation.ToQuaternion();
         }
 
         #endregion

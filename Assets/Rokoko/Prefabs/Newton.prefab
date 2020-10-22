@@ -2092,6 +2092,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7694c1eb6726a2d49a01558f46c8ef83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  positionSpace: 1
+  rotationSpace: 0
   meshRenderer: {fileID: 3310642109320222273}
   face: {fileID: 2039310747}
   bodyMaterial: {fileID: 2100000, guid: 423b90d678fb1c8408b9143d62e31c74, type: 2}

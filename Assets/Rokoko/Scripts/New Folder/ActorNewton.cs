@@ -69,7 +69,7 @@ namespace Rokoko
             meshMaterials[HEAD_TO_MATERIAL_INDEX] = (actorFrame.meta.hasFace) ? invisibleMaterial : bodyMaterial;
             meshRenderer.materials = meshMaterials;
 
-            face.SetColor(actorFrame.color.ToColor());
+            face?.SetColor(actorFrame.color.ToColor());
         }
 
         #endregion
