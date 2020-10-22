@@ -35,6 +35,7 @@ public class PrefabPool<T> where T : MonoBehaviour
     {
         pool.Enqueue(instance);
         instance.gameObject.SetActive(false);
+        instance.name = prefab.name;
     }
 
     private T InstantiatePrefab()
