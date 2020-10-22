@@ -230,4 +230,11 @@ namespace Rokoko.Serializers
     }
 
     #endregion
+
+    public enum PropType
+    {
+        NORMAL = 0,
+        CAMERA = 1,
+        STICK = 2
+    }
 }

@@ -149,4 +149,132 @@ public static class FrameHelper
             return Color.white;
         return new Color((float)color[0] / 255f, (float)color[1] / 255f, (float)color[2] / 255f);
     }
+
+    public static float[] GetValues(this FaceFrame faceFrame)
+    {
+        var values = new float[(int)BlendShapes.size];
+        values[(int)BlendShapes.eyeBlinkLeft] = faceFrame.eyeBlinkLeft;
+        values[(int)BlendShapes.eyeLookDownLeft] = faceFrame.eyeLookDownLeft;
+        values[(int)BlendShapes.eyeLookInLeft] = faceFrame.eyeLookInLeft;
+        values[(int)BlendShapes.eyeLookOutLeft] = faceFrame.eyeLookOutLeft;
+        values[(int)BlendShapes.eyeLookUpLeft] = faceFrame.eyeLookUpLeft;
+        values[(int)BlendShapes.eyeSquintLeft] = faceFrame.eyeSquintLeft;
+        values[(int)BlendShapes.eyeWideLeft] = faceFrame.eyeWideLeft;
+        values[(int)BlendShapes.eyeBlinkRight] = faceFrame.eyeBlinkRight;
+        values[(int)BlendShapes.eyeLookDownRight] = faceFrame.eyeLookDownRight;
+        values[(int)BlendShapes.eyeLookInRight] = faceFrame.eyeLookInRight;
+        values[(int)BlendShapes.eyeLookOutRight] = faceFrame.eyeLookOutRight;
+        values[(int)BlendShapes.eyeLookUpRight] = faceFrame.eyeLookUpRight;
+        values[(int)BlendShapes.eyeSquintRight] = faceFrame.eyeSquintRight;
+        values[(int)BlendShapes.eyeWideRight] = faceFrame.eyeWideRight;
+        values[(int)BlendShapes.jawForward] = faceFrame.jawForward;
+        values[(int)BlendShapes.jawLeft] = faceFrame.jawLeft;
+        values[(int)BlendShapes.jawRight] = faceFrame.jawRight;
+        values[(int)BlendShapes.jawOpen] = faceFrame.jawOpen;
+        values[(int)BlendShapes.mouthClose] = faceFrame.mouthClose;
+        values[(int)BlendShapes.mouthFunnel] = faceFrame.mouthFunnel;
+        values[(int)BlendShapes.mouthPucker] = faceFrame.mouthPucker;
+        values[(int)BlendShapes.mouthLeft] = faceFrame.mouthLeft;
+        values[(int)BlendShapes.mouthRight] = faceFrame.mouthRight;
+        values[(int)BlendShapes.mouthSmileLeft] = faceFrame.mouthSmileLeft;
+        values[(int)BlendShapes.mouthSmileRight] = faceFrame.mouthSmileRight;
+        values[(int)BlendShapes.mouthFrownLeft] = faceFrame.mouthFrownLeft;
+        values[(int)BlendShapes.mouthFrownRight] = faceFrame.mouthFrownRight;
+        values[(int)BlendShapes.mouthDimpleLeft] = faceFrame.mouthDimpleLeft;
+        values[(int)BlendShapes.mouthDimpleRight] = faceFrame.mouthDimpleRight;
+        values[(int)BlendShapes.mouthStretchLeft] = faceFrame.mouthStretchLeft;
+        values[(int)BlendShapes.mouthStretchRight] = faceFrame.mouthStretchRight;
+        values[(int)BlendShapes.mouthRollLower] = faceFrame.mouthRollLower;
+        values[(int)BlendShapes.mouthRollUpper] = faceFrame.mouthRollUpper;
+        values[(int)BlendShapes.mouthShrugLower] = faceFrame.mouthShrugLower;
+        values[(int)BlendShapes.mouthShrugUpper] = faceFrame.mouthShrugUpper;
+        values[(int)BlendShapes.mouthPressLeft] = faceFrame.mouthPressLeft;
+        values[(int)BlendShapes.mouthPressRight] = faceFrame.mouthPressRight;
+        values[(int)BlendShapes.mouthLowerDownLeft] = faceFrame.mouthLowerDownLeft;
+        values[(int)BlendShapes.mouthLowerDownRight] = faceFrame.mouthLowerDownRight;
+        values[(int)BlendShapes.mouthUpperUpLeft] = faceFrame.mouthUpperUpLeft;
+        values[(int)BlendShapes.mouthUpperUpRight] = faceFrame.mouthUpperUpRight;
+        values[(int)BlendShapes.browDownLeft] = faceFrame.browDownLeft;
+        values[(int)BlendShapes.browDownRight] = faceFrame.browDownRight;
+        values[(int)BlendShapes.browInnerUp] = faceFrame.browInnerUp;
+        values[(int)BlendShapes.browOuterUpLeft] = faceFrame.browOuterUpLeft;
+        values[(int)BlendShapes.browOuterUpRight] = faceFrame.browOuterUpRight;
+        values[(int)BlendShapes.cheekPuff] = faceFrame.cheekPuff;
+        values[(int)BlendShapes.cheekSquintLeft] = faceFrame.cheekSquintLeft;
+        values[(int)BlendShapes.cheekSquintRight] = faceFrame.cheekSquintRight;
+        values[(int)BlendShapes.noseSneerLeft] = faceFrame.noseSneerLeft;
+        values[(int)BlendShapes.noseSneerRight] = faceFrame.noseSneerRight;
+        values[(int)BlendShapes.tongueOut] = faceFrame.tongueOut;
+
+        return values;
+    }
+
+    public static IReadOnlyList<string> GetBlendShapes(this FaceFrame faceFrame)
+    {
+        List<string> result = new List<string>();
+        for (int i = 0; i < (int)BlendShapes.size; i++)
+        {
+            var blendShape = $"{((BlendShapes)i)}";
+            result.Add(blendShape);
+        }
+
+        return result;
+    }
+
+    public enum BlendShapes
+    {
+        eyeBlinkLeft = 0,
+        eyeLookDownLeft = 1,
+        eyeLookInLeft = 2,
+        eyeLookOutLeft = 3,
+        eyeLookUpLeft = 4,
+        eyeSquintLeft = 5,
+        eyeWideLeft = 6,
+        eyeBlinkRight = 7,
+        eyeLookDownRight = 8,
+        eyeLookInRight = 9,
+        eyeLookOutRight = 10,
+        eyeLookUpRight = 11,
+        eyeSquintRight = 12,
+        eyeWideRight = 13,
+        jawForward = 14,
+        jawLeft = 15,
+        jawRight = 16,
+        jawOpen = 17,
+        mouthClose = 18,
+        mouthFunnel = 19,
+        mouthPucker = 20,
+        mouthLeft = 21,
+        mouthRight = 22,
+        mouthSmileLeft = 23,
+        mouthSmileRight = 24,
+        mouthFrownLeft = 25,
+        mouthFrownRight = 26,
+        mouthDimpleLeft = 27,
+        mouthDimpleRight = 28,
+        mouthStretchLeft = 29,
+        mouthStretchRight = 30,
+        mouthRollLower = 31,
+        mouthRollUpper = 32,
+        mouthShrugLower = 33,
+        mouthShrugUpper = 34,
+        mouthPressLeft = 35,
+        mouthPressRight = 36,
+        mouthLowerDownLeft = 37,
+        mouthLowerDownRight = 38,
+        mouthUpperUpLeft = 39,
+        mouthUpperUpRight = 40,
+        browDownLeft = 41,
+        browDownRight = 42,
+        browInnerUp = 43,
+        browOuterUpLeft = 44,
+        browOuterUpRight = 45,
+        cheekPuff = 46,
+        cheekSquintLeft = 47,
+        cheekSquintRight = 48,
+        noseSneerLeft = 49,
+        noseSneerRight = 50,
+        tongueOut = 51,
+        size = 52
+    }
 }

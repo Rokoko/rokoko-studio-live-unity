@@ -1,4 +1,5 @@
-﻿using Rokoko.RemoteAPI;
+﻿using Rokoko;
+using Rokoko.RemoteAPI;
 using Rokoko.Serializers;
 using Rokoko.Threading;
 using System.Collections;
@@ -57,5 +58,42 @@ public class StudioManager : MonoBehaviour
             PropFrame propFrame = frame.scene.props[i];
             props[propFrame.name].UpdateProp(propFrame);
         }
+
+        ClearUnusedPlaybacks(frame);
+    }
+
+    private void ClearUnusedPlaybacks(LiveFrame_v4 frame)
+    {
+        foreach (Actor actor in new List<Actor>((IEnumerable<Actor>)actors.Values))
+        {
+            if (!HasFrameActor(frame, actor.actorName))
+                actors.Remove(actor.actorName);
+        }
+
+        foreach (Prop prop in new List<Prop>((IEnumerable<Prop>)props.Values))
+        {
+            if (!HasFrameProp(frame, prop.propName))
+                props.Remove(prop.propName);
+        }
+    }
+
+    private bool HasFrameActor(LiveFrame_v4 frame, string actorName)
+    {
+        for (int i = 0; i < frame.scene.actors.Length; i++)
+        {
+            if (frame.scene.actors[i].name == actorName)
+                return true;
+        }
+        return false;
+    }
+
+    private bool HasFrameProp(LiveFrame_v4 frame, string propName)
+    {
+        for (int i = 0; i < frame.scene.props.Length; i++)
+        {
+            if (frame.scene.props[i].name == propName)
+                return true;
+        }
+        return false;
     }
 }

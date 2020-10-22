@@ -3,22 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Prop : MonoBehaviour
+namespace Rokoko
 {
-    private MeshRenderer meshRenderer;
-
-    private void Awake()
+    public class Prop : MonoBehaviour
     {
-        meshRenderer = this.GetComponent<MeshRenderer>();
-    }
+        public string propName { get; private set; }
 
-    public void UpdateProp(PropFrame propFrame)
-    {
-        this.gameObject.name = propFrame.name;
-        this.transform.position = propFrame.position.ToVector3();
-        this.transform.rotation = propFrame.rotation.ToQuaternion();
+        private MeshRenderer meshRenderer;
 
-        if (meshRenderer != null)
-            meshRenderer.material.color = propFrame.color.ToColor();
+        private void Awake()
+        {
+            meshRenderer = this.GetComponent<MeshRenderer>();
+        }
+
+        public void UpdateProp(PropFrame propFrame)
+        {
+            propName = propFrame.name;
+            this.gameObject.name = propName;
+            this.transform.position = propFrame.position.ToVector3();
+            this.transform.rotation = propFrame.rotation.ToQuaternion();
+
+            if (meshRenderer != null)
+                meshRenderer.material.color = propFrame.color.ToColor();
+        }
     }
 }

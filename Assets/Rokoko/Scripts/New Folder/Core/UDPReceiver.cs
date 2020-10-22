@@ -16,12 +16,29 @@ namespace Rokoko.RemoteAPI
 
         public virtual void Initialize()
         {
-            client = new UdpClient(receivePortNumber);
-            client.Client.SendBufferSize = bufferSize;
+            try
+            {
+                client = new UdpClient(receivePortNumber);
+                client.Client.SendBufferSize = bufferSize;
+            }
+            catch (SocketException)
+            {
+                Debug.LogError($"Seem like port:{receivePortNumber} is already in use. Is plugin running already in other application?");
+            }
+            catch(System.Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public virtual void StartListening()
         {
+            if (client == null)
+            {
+                Debug.LogError("UDPReceiver - Client isn't initialized.");
+                return;
+            }
+
             if (thread != null)
             {
                 Debug.LogWarning("UDPReceiver - Cannot start listening. Thread is already listening");
