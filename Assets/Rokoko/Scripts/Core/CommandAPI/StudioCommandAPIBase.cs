@@ -62,8 +62,8 @@ namespace Rokoko.CommandAPI
             string url = $"http://{IP}:{port}/v1/{apiKey}/{endpoint}";
             if (debug)
             {
-                Debug.Log("Sending request: " + url);
-                Debug.Log("Sending data: " + json);
+                Debug.Log("Sending request: " + url, this.transform);
+                Debug.Log("Sending data: " + json, this.transform);
             }
 
             // convert json string to byte
@@ -79,13 +79,13 @@ namespace Rokoko.CommandAPI
             if (request.isNetworkError)
             {
                 if (debug)
-                    Debug.LogWarning($"There was an error sending request: {request.error}\n{body}");
+                    Debug.LogWarning($"There was an error sending request: {request.error}\n{body}", this.transform);
                 OnCommmandError(request.error);
             }
             else
             {
                 if (debug)
-                    Debug.Log($"Response: {request.responseCode}: {body}");
+                    Debug.Log($"Response: {request.responseCode}: {body}", this.transform);
                 OnCommmandResponse(JsonUtility.FromJson<ResponseMessage>(body));
             }
             task.SetResult(body);

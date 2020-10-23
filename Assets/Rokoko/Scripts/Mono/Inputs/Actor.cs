@@ -1,14 +1,26 @@
 ﻿using Rokoko.Core;
 using Rokoko.Helper;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Rokoko.Inputs
 {
-    [RequireComponent(typeof(Animator))]
     public class Actor : MonoBehaviour
     {
+        [System.Serializable]
+        public enum BoneMappingEnum
+        {
+            Animator,
+            Custom
+        }
+
+        [HideInInspector] public BoneMappingEnum boneMapping;
+        [HideInInspector] public Animator animator;
+        [HideInInspector] public ActorCustomBoneMapping customBoneMapping;
+
+        [Header("Convert Space")]
         public Space positionSpace = Space.Self;
         public Space rotationSpace = Space.Self;
 
@@ -21,8 +33,7 @@ namespace Rokoko.Inputs
         [SerializeField] protected Face face = null;
         [SerializeField] protected bool autoHideFaceWhenInactive = true;
 
-        protected Dictionary<HumanBodyBones, Transform> humanBones = new Dictionary<HumanBodyBones, Transform>();
-        protected Animator animator;
+        protected Dictionary<HumanBodyBones, Transform> animatorHumanBones = new Dictionary<HumanBodyBones, Transform>();
         protected Material[] meshMaterials;
 
         #region Initialize
@@ -36,10 +47,12 @@ namespace Rokoko.Inputs
         // Cache the bone transforms
         protected void InitializeBodyBones()
         {
+            if (animator == null) return;
+
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
                 if (bone == HumanBodyBones.LastBone) break;
-                humanBones.Add(bone, animator.GetBoneTransform(bone));
+                animatorHumanBones.Add(bone, animator.GetBoneTransform(bone));
             }
         }
 
@@ -95,19 +108,27 @@ namespace Rokoko.Inputs
 
         protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame, bool updatePosition)
         {
+            Transform boneTransform = null;
+            if (boneMapping == BoneMappingEnum.Animator)
+                boneTransform = animatorHumanBones[bone];
+            else
+                boneTransform = customBoneMapping.customBodyBones[(int)bone];
+
+            if (boneTransform == null) return;
+
             if (updatePosition)
             {
                 if (positionSpace == Space.World)
-                    humanBones[bone].position = jointFrame.position.ToVector3();
+                    boneTransform.position = jointFrame.position.ToVector3();
                 else
-                    humanBones[bone].localPosition = jointFrame.position.ToVector3();
+                    boneTransform.localPosition = jointFrame.position.ToVector3();
             }
 
             Quaternion worldRotation = jointFrame.rotation.ToQuaternion();
             if (rotationSpace == Space.World)
-                humanBones[bone].rotation = worldRotation;
+                boneTransform.rotation = worldRotation;
             else
-                humanBones[bone].localRotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
+                boneTransform.localRotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
             //humanBones[bone].localRotation = jointFrame.rotation.ToQuaternion();
         }
 
