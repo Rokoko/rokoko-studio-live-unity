@@ -61,7 +61,6 @@ namespace Rokoko.UI
                 if (!frame.HasProfile(row.profileName))
                     rows.Remove(row.profileName);
             }
-
         }
     }
 }
