@@ -1,4 +1,4 @@
-Shader "Floor/RoundGridFloor"
+Shader "Rokoko/RoundGridFloor"
 {
 	Properties
 	{

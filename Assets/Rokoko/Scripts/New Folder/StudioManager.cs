@@ -1,8 +1,8 @@
 ﻿using Rokoko;
 using Rokoko.RemoteAPI;
 using Rokoko.Serializers;
-using Rokoko.Threading;
 using Rokoko.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +27,8 @@ public class StudioManager : MonoBehaviour
     private PrefabInstancer<string, Actor> actors;
     private PrefabInstancer<string, Prop> props;
 
+    private List<Action> actionsOnMainThread = new List<Action>();
+
     #region MonoBehaviour
 
     // Start is called before the first frame update
@@ -48,6 +50,19 @@ public class StudioManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // Run all actions inside Unity's main thread
+        lock (actionsOnMainThread)
+        {
+            for (int i = 0; i < actionsOnMainThread.Count; i++)
+            {
+                actionsOnMainThread[i]();
+            }
+            actionsOnMainThread.Clear();
+        }
+    }
+
     private void OnDestroy()
     {
         studioReceiver.Dispose();
@@ -55,10 +70,19 @@ public class StudioManager : MonoBehaviour
 
     #endregion
 
+    /// <summary>
+    /// Store actions to run on Unity's main thread
+    /// </summary>
+    private void RunOnMainThread(Action action)
+    {
+        lock (actionsOnMainThread)
+            actionsOnMainThread.Add(action);
+    }
+
     private void StudioReceiver_onStudioDataReceived(object sender, LiveFrame_v4 e)
     {
         // Process in Unity thread
-        AsyncThread.RunOnMainThread(() =>
+        RunOnMainThread(() =>
         {
             ProcessLiveFrame(e);
         });
@@ -95,7 +119,6 @@ public class StudioManager : MonoBehaviour
 
         // Show default character
         UpdateDefaultActorWhenIdle();
-
 
         // Update Hierarchy UI
         uiManager?.UpdateHierarchy(frame);
