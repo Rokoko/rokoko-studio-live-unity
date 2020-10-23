@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6773956799630399738}
   - component: {fileID: 6773956799630399737}
   m_Layer: 5
-  m_Name: Hierararchy
+  m_Name: HierarchyContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 6773956800225935740}
   - component: {fileID: 6773956800225935731}
   m_Layer: 5
-  m_Name: Hierararchy
+  m_Name: Hierarchy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 6773956800489933358}
   - component: {fileID: 6773956800489933357}
   m_Layer: 5
-  m_Name: Hierararchy_UI
+  m_Name: Hierarchy_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
