@@ -53,7 +53,6 @@ namespace Rokoko.UnityEditor
                 else if (!actor.animator.isHuman)
                 {
                     EditorGUILayout.HelpBox("The avatar you are using is not humanoid.", MessageType.Warning);
-                    int checkHumanoidAnimator = 1;
                 }
             }
             else

@@ -136,8 +136,10 @@ namespace Rokoko.Inputs
             if (rotationSpace == Space.World)
                 boneTransform.rotation = worldRotation;
             else
-                boneTransform.localRotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
-            //humanBones[bone].localRotation = jointFrame.rotation.ToQuaternion();
+            {
+                if (debug)
+                    Debug.LogWarning("LocalSpace is not supported for joints in this version. Please check for updates soon.");
+            }
         }
 
         #endregion
