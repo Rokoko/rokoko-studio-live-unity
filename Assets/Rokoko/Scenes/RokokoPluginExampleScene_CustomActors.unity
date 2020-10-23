@@ -409,6 +409,7 @@ MonoBehaviour:
   meshRenderer: {fileID: 1731979974}
   face: {fileID: 1436507349}
   autoHideFaceWhenInactive: 0
+  debug: 1
 --- !u!95 &106047991
 Animator:
   serializedVersion: 3
@@ -1778,7 +1779,7 @@ PrefabInstance:
     - target: {fileID: 1417227176770460820, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 66.73932
       objectReference: {fileID: 0}
     - target: {fileID: 1417227176770460820, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
@@ -1888,7 +1889,7 @@ PrefabInstance:
     - target: {fileID: 1417227177470801168, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 109.23932
       objectReference: {fileID: 0}
     - target: {fileID: 1417227177470801168, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
@@ -1968,7 +1969,7 @@ PrefabInstance:
     - target: {fileID: 6773956800457302902, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 6773956800457302902, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
@@ -4732,7 +4733,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f1b7bab29ae9c4ab510759d0fbaa91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blendshapeMapping: 0
+  blendshapeCustomMap: {fileID: 0}
   meshRenderer: {fileID: 1436507346}
+  debug: 0
 --- !u!1 &1467906491
 GameObject:
   m_ObjectHideFlags: 0
@@ -6742,6 +6746,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 722003804, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.9442139
+      objectReference: {fileID: 0}
     - target: {fileID: 854470189, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -6992,6 +7000,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1159439385}
     m_Modifications:
+    - target: {fileID: 8189913928828772501, guid: 45a3ed8bac3c96c4297dcd116a155351,
+        type: 3}
+      propertyPath: debug
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8189913928828772502, guid: 45a3ed8bac3c96c4297dcd116a155351,
         type: 3}
       propertyPath: m_Name
@@ -7120,6 +7133,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4791309573049112653, guid: fe3b0c434bb22024aaddb5f7564faa14,
+        type: 3}
+      propertyPath: blendshapeMapping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4791309573049112653, guid: fe3b0c434bb22024aaddb5f7564faa14,
+        type: 3}
+      propertyPath: blendshapeCustomMap
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe3b0c434bb22024aaddb5f7564faa14, type: 3}

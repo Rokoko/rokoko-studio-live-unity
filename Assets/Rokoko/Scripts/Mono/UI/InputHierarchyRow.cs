@@ -11,6 +11,8 @@ namespace Rokoko.UI
     {
         public string profileName { get; private set; }
 
+        [Header("Actor")]
+        [SerializeField] private GameObject actorPanel = null;
         [SerializeField] private Image profileImage = null;
         [SerializeField] private Text profileText = null;
         [SerializeField] private Image faceImage = null;
@@ -19,8 +21,16 @@ namespace Rokoko.UI
         [SerializeField] private Image rightGloveImage = null;
         [SerializeField] private Color inactiveColor = Color.gray;
 
+        [Header("Prop")]
+        [SerializeField] private GameObject propPanel = null;
+        [SerializeField] private Image propImage = null;
+        [SerializeField] private Text propText = null;
+
         public void UpdateRow(ActorFrame actorFrame)
         {
+            actorPanel.SetActive(true);
+            propPanel.SetActive(false);
+
             profileName = actorFrame.name;
             profileImage.color = actorFrame.color.ToColor();
             profileText.text = actorFrame.name;
@@ -28,6 +38,16 @@ namespace Rokoko.UI
             suitImage.color = actorFrame.meta.hasBody ? Color.white : inactiveColor;
             leftGloveImage.color = actorFrame.meta.hasLeftGlove ? Color.white : inactiveColor;
             rightGloveImage.color = actorFrame.meta.hasRightGlove ? Color.white : inactiveColor;
+        }
+
+        public void UpdateRow(PropFrame propFrame)
+        {
+            actorPanel.SetActive(false);
+            propPanel.SetActive(true);
+
+            profileName = propFrame.name;
+            propImage.color = propFrame.color.ToColor();
+            propText.text = propFrame.name;
         }
     }
 }

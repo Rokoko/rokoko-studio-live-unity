@@ -18,7 +18,7 @@ namespace Rokoko.Inputs
 
         [HideInInspector] public BoneMappingEnum boneMapping;
         [HideInInspector] public Animator animator;
-        [HideInInspector] public ActorCustomBoneMapping customBoneMapping;
+        [HideInInspector] public HumanBoneMapping customBoneMapping;
 
         [Header("Convert Space")]
         public Space positionSpace = Space.Self;
@@ -33,6 +33,9 @@ namespace Rokoko.Inputs
         [SerializeField] protected Face face = null;
         [SerializeField] protected bool autoHideFaceWhenInactive = true;
 
+        [Space(10)]
+        public bool debug = false;
+
         protected Dictionary<HumanBodyBones, Transform> animatorHumanBones = new Dictionary<HumanBodyBones, Transform>();
         protected Material[] meshMaterials;
 
@@ -44,7 +47,7 @@ namespace Rokoko.Inputs
             InitializeBodyBones();
         }
 
-        // Cache the bone transforms
+        // Cache the bone transforms from Animator
         protected void InitializeBodyBones()
         {
             if (animator == null) return;
@@ -114,7 +117,12 @@ namespace Rokoko.Inputs
             else
                 boneTransform = customBoneMapping.customBodyBones[(int)bone];
 
-            if (boneTransform == null) return;
+            if (boneTransform == null)
+            {
+                if (debug)
+                    Debug.LogWarning($"Couldn't find Transform for bone:{bone} in {boneMapping}Mapping component", this.transform);
+                return;
+            }
 
             if (updatePosition)
             {

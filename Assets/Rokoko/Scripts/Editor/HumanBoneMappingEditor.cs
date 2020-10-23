@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace Rokoko.UnityEditor
 {
-    [CustomEditor(typeof(ActorCustomBoneMapping))]
+    [CustomEditor(typeof(HumanBoneMapping))]
     [CanEditMultipleObjects]
-    public class ActorCustomBoneMappingEditor : TweakableEditor
+    public class HumanBoneMappingEditor : TweakableEditor
     {
         private HumanBodyBones[] _HumanBodyBonesArray;
 
@@ -41,7 +41,7 @@ namespace Rokoko.UnityEditor
 
         public override void OnInspectorGUI()
         {
-            ActorCustomBoneMapping boneMapping = (ActorCustomBoneMapping)target;
+            HumanBoneMapping boneMapping = (HumanBoneMapping)target;
             Undo.RecordObject(boneMapping, "Undo ActorCustomBoneMapping Changes");
 
             // Initialize Array

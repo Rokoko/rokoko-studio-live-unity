@@ -6,65 +6,66 @@ using UnityEngine;
 
 namespace Rokoko.Helper
 {
+    [System.Serializable]
+    public enum BlendShapes
+    {
+        eyeBlinkLeft = 0,
+        eyeLookDownLeft = 1,
+        eyeLookInLeft = 2,
+        eyeLookOutLeft = 3,
+        eyeLookUpLeft = 4,
+        eyeSquintLeft = 5,
+        eyeWideLeft = 6,
+        eyeBlinkRight = 7,
+        eyeLookDownRight = 8,
+        eyeLookInRight = 9,
+        eyeLookOutRight = 10,
+        eyeLookUpRight = 11,
+        eyeSquintRight = 12,
+        eyeWideRight = 13,
+        jawForward = 14,
+        jawLeft = 15,
+        jawRight = 16,
+        jawOpen = 17,
+        mouthClose = 18,
+        mouthFunnel = 19,
+        mouthPucker = 20,
+        mouthLeft = 21,
+        mouthRight = 22,
+        mouthSmileLeft = 23,
+        mouthSmileRight = 24,
+        mouthFrownLeft = 25,
+        mouthFrownRight = 26,
+        mouthDimpleLeft = 27,
+        mouthDimpleRight = 28,
+        mouthStretchLeft = 29,
+        mouthStretchRight = 30,
+        mouthRollLower = 31,
+        mouthRollUpper = 32,
+        mouthShrugLower = 33,
+        mouthShrugUpper = 34,
+        mouthPressLeft = 35,
+        mouthPressRight = 36,
+        mouthLowerDownLeft = 37,
+        mouthLowerDownRight = 38,
+        mouthUpperUpLeft = 39,
+        mouthUpperUpRight = 40,
+        browDownLeft = 41,
+        browDownRight = 42,
+        browInnerUp = 43,
+        browOuterUpLeft = 44,
+        browOuterUpRight = 45,
+        cheekPuff = 46,
+        cheekSquintLeft = 47,
+        cheekSquintRight = 48,
+        noseSneerLeft = 49,
+        noseSneerRight = 50,
+        tongueOut = 51,
+        size = 52
+    }
+
     public static class RokokoHelper
     {
-        public enum BlendShapes
-        {
-            eyeBlinkLeft = 0,
-            eyeLookDownLeft = 1,
-            eyeLookInLeft = 2,
-            eyeLookOutLeft = 3,
-            eyeLookUpLeft = 4,
-            eyeSquintLeft = 5,
-            eyeWideLeft = 6,
-            eyeBlinkRight = 7,
-            eyeLookDownRight = 8,
-            eyeLookInRight = 9,
-            eyeLookOutRight = 10,
-            eyeLookUpRight = 11,
-            eyeSquintRight = 12,
-            eyeWideRight = 13,
-            jawForward = 14,
-            jawLeft = 15,
-            jawRight = 16,
-            jawOpen = 17,
-            mouthClose = 18,
-            mouthFunnel = 19,
-            mouthPucker = 20,
-            mouthLeft = 21,
-            mouthRight = 22,
-            mouthSmileLeft = 23,
-            mouthSmileRight = 24,
-            mouthFrownLeft = 25,
-            mouthFrownRight = 26,
-            mouthDimpleLeft = 27,
-            mouthDimpleRight = 28,
-            mouthStretchLeft = 29,
-            mouthStretchRight = 30,
-            mouthRollLower = 31,
-            mouthRollUpper = 32,
-            mouthShrugLower = 33,
-            mouthShrugUpper = 34,
-            mouthPressLeft = 35,
-            mouthPressRight = 36,
-            mouthLowerDownLeft = 37,
-            mouthLowerDownRight = 38,
-            mouthUpperUpLeft = 39,
-            mouthUpperUpRight = 40,
-            browDownLeft = 41,
-            browDownRight = 42,
-            browInnerUp = 43,
-            browOuterUpLeft = 44,
-            browOuterUpRight = 45,
-            cheekPuff = 46,
-            cheekSquintLeft = 47,
-            cheekSquintRight = 48,
-            noseSneerLeft = 49,
-            noseSneerRight = 50,
-            tongueOut = 51,
-            size = 52
-        }
-
         public static Vector3 ToVector3(this Vector3Frame vec3)
         {
             return new Vector3(vec3.x, vec3.y, vec3.z);
@@ -80,6 +81,14 @@ namespace Rokoko.Helper
             string newString = input;
             if (!String.IsNullOrEmpty(newString) && Char.IsUpper(newString[0]))
                 newString = Char.ToLower(newString[0]) + newString.Substring(1);
+            return newString;
+        }
+
+        public static string ToUpperFirstChar(this string input)
+        {
+            string newString = input;
+            if (!String.IsNullOrEmpty(newString) && Char.IsLower(newString[0]))
+                newString = Char.ToUpper(newString[0]) + newString.Substring(1);
             return newString;
         }
 
@@ -304,19 +313,25 @@ namespace Rokoko.Helper
             return values;
         }
 
-        public static IReadOnlyList<string> GetBlendShapes(this FaceFrame faceFrame)
+        private static BlendShapes[] _BlendshapesArray = null;
+        public static BlendShapes[] BlendshapesArray
         {
-            List<string> result = new List<string>();
-            for (int i = 0; i < (int)BlendShapes.size; i++)
+            get
             {
-                var blendShape = $"{((BlendShapes)i)}";
-                result.Add(blendShape);
-            }
+                if (_BlendshapesArray == null)
+                {
+                    _BlendshapesArray = new BlendShapes[(int)BlendShapes.size];
+                    for (int i = 0; i < _BlendshapesArray.Length; i++)
+                    {
+                        _BlendshapesArray[i] = (BlendShapes)i;
+                    }
+                }
 
-            return result;
+                return _BlendshapesArray;
+            }
         }
 
-        private static HumanBodyBones[] _HumanBodyBonesArray;
+        private static HumanBodyBones[] _HumanBodyBonesArray = null;
 
         public static HumanBodyBones[] HumanBodyBonesArray
         {
