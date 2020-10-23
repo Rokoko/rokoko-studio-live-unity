@@ -34,9 +34,9 @@ namespace Rokoko.Inputs
         }
 
         // Cache the bone transforms
-        private void InitializeBodyBones()
+        protected void InitializeBodyBones()
         {
-            foreach (HumanBodyBones bone in System.Enum.GetValues(typeof(HumanBodyBones)))
+            foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
                 if (bone == HumanBodyBones.LastBone) break;
                 humanBones.Add(bone, animator.GetBoneTransform(bone));
@@ -84,7 +84,7 @@ namespace Rokoko.Inputs
 
         protected void UpdateSkeleton(BodyFrame bodyFrame)
         {
-            foreach (HumanBodyBones bone in System.Enum.GetValues(typeof(HumanBodyBones)))
+            foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
                 if (bone == HumanBodyBones.LastBone) break;
                 ActorJointFrame? boneFrame = bodyFrame.GetBoneFrame(bone);
@@ -101,7 +101,6 @@ namespace Rokoko.Inputs
                     humanBones[bone].position = jointFrame.position.ToVector3();
                 else
                     humanBones[bone].localPosition = jointFrame.position.ToVector3();
-
             }
 
             Quaternion worldRotation = jointFrame.rotation.ToQuaternion();

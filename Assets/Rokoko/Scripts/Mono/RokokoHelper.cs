@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Rokoko.Helper
 {
-    public static class FrameHelper
+    public static class RokokoHelper
     {
         public enum BlendShapes
         {
@@ -314,6 +314,22 @@ namespace Rokoko.Helper
             }
 
             return result;
+        }
+
+        private static HumanBodyBones[] _HumanBodyBonesArray;
+
+        public static HumanBodyBones[] HumanBodyBonesArray
+        {
+            get
+            {
+                if (_HumanBodyBonesArray == null)
+                {
+                    _HumanBodyBonesArray = new HumanBodyBones[(int)HumanBodyBones.LastBone];
+                    for (int i = 0; i < _HumanBodyBonesArray.Length; i++)
+                        _HumanBodyBonesArray[i] = (HumanBodyBones)i;
+                }
+                return _HumanBodyBonesArray;
+            }
         }
     }
 }

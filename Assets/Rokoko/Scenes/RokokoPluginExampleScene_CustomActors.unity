@@ -508,7 +508,6 @@ GameObject:
   m_Component:
   - component: {fileID: 145057046}
   - component: {fileID: 145057049}
-  - component: {fileID: 145057048}
   - component: {fileID: 145057047}
   m_Layer: 4
   m_Name: GroundZeroMarker
@@ -571,20 +570,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &145057048
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 145057045}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &145057049
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -835,75 +820,6 @@ Transform:
   m_Father: {fileID: 384667555}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &197753631
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3055574581867789889, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_Name
-      value: Prop
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3058609226091157611, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5, type: 3}
 --- !u!1 &224802614
 GameObject:
   m_ObjectHideFlags: 0
@@ -4390,7 +4306,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1305644558}
   - component: {fileID: 1305644561}
-  - component: {fileID: 1305644560}
   - component: {fileID: 1305644559}
   m_Layer: 4
   m_Name: CheckerboardPlane
@@ -4452,20 +4367,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &1305644560
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1305644557}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &1305644561
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5808,7 +5709,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1810274868}
   - component: {fileID: 1810274871}
-  - component: {fileID: 1810274870}
   - component: {fileID: 1810274869}
   m_Layer: 4
   m_Name: Arrow
@@ -5870,20 +5770,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &1810274870
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1810274867}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &1810274871
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -8033,7 +7919,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 455762063, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 73.480835
+      value: 82.977974
       objectReference: {fileID: 0}
     - target: {fileID: 455762063, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_AnchorMin.y

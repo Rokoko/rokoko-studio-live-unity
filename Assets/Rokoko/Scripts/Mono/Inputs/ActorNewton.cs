@@ -22,16 +22,6 @@ namespace Rokoko.Inputs
             InitializeMaterials();
         }
 
-        // Cache the bone transforms
-        private void InitializeBodyBones()
-        {
-            foreach (HumanBodyBones bone in System.Enum.GetValues(typeof(HumanBodyBones)))
-            {
-                if (bone == HumanBodyBones.LastBone) break;
-                humanBones.Add(bone, animator.GetBoneTransform(bone));
-            }
-        }
-
         private void InitializeMaterials()
         {
             // Clone the material, so not to affect other objects
