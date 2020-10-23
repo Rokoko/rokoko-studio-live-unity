@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
 
-namespace Rokoko.RemoteAPI
+namespace Rokoko.Core
 {
     public class UDPReceiver
     {

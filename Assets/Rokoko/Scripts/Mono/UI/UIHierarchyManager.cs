@@ -1,4 +1,5 @@
-﻿using Rokoko.Serializers;
+﻿using Rokoko.Core;
+using Rokoko.Helper;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,11 +45,6 @@ namespace Rokoko.UI
 
             if (forceLayoutUpdate)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(prefabContainer as RectTransform);
-        }
-
-        public void RemoveRow(string profileName)
-        {
-            rows.Remove(profileName);
         }
 
         /// <summary>

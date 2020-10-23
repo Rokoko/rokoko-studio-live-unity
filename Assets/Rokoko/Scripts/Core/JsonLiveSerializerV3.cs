@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Rokoko.Serializers
+namespace Rokoko.Core
 {
     #region Data Structs
 

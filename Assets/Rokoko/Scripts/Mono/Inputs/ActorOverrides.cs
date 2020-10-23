@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Rokoko
+namespace Rokoko.Inputs
 {
     public class ActorOverrides : MonoBehaviour
     {
