@@ -30,7 +30,7 @@ namespace Rokoko.UnityEditor
             Face face = (Face)target;
             serializedObject.Update();
 
-            Undo.RecordObject(face, "Undo Actor Changes");
+            Undo.RecordObject(face, "Undo Face Changes");
 
             EditorGUILayout.HelpBox("Blendshape mapping is used to convert a Studio Face to any custom character blendshapes", MessageType.Info);
             EditorGUILayout.PropertyField(blendshapeMapping);
@@ -41,8 +41,11 @@ namespace Rokoko.UnityEditor
             else
             {
                 EditorGUILayout.PropertyField(blendshapeCustomMap);
-                if(face.GetComponent<BlendShapesMapping>() == null)
-                    face.blendshapeCustomMap = face.gameObject.AddComponent<BlendShapesMapping>();
+                if (face.GetComponent<BlendShapesMapping>() == null)
+                {
+                    Undo.RecordObject(face.gameObject, "Undo Face Changes");
+                    face.blendshapeCustomMap = Undo.AddComponent(face.gameObject, typeof(BlendShapesMapping)) as BlendShapesMapping;
+                }
             }
 
             serializedObject.ApplyModifiedProperties();
