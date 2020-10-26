@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &4791309573049112653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3557786246351290696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6f1b7bab29ae9c4ab510759d0fbaa91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blendshapeMapping: 0
+  blendshapeCustomMap: {fileID: 0}
+  meshRenderer: {fileID: 3067043125635508846}
+  debug: 0
 --- !u!1 &4791309571610167173
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,7 +120,7 @@ GameObject:
   - component: {fileID: 4791309571641307532}
   - component: {fileID: 4791309571641307534}
   m_Layer: 0
-  m_Name: CustomActor_CustomSkeletonMap
+  m_Name: Newton_CustomSkeletonMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,10 +176,11 @@ MonoBehaviour:
   animator: {fileID: 0}
   customBoneMapping: {fileID: 4791309571641307534}
   positionSpace: 1
-  rotationSpace: 0
+  rotationSpace: 1
   meshRenderer: {fileID: 4791309572501887369}
   face: {fileID: 4791309573049112653}
   autoHideFaceWhenInactive: 0
+  debug: 0
 --- !u!114 &4791309571641307534
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4099,19 +4116,6 @@ Transform:
   m_Father: {fileID: 4791309573145442689}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4791309573049112653
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3557786246351290696}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6f1b7bab29ae9c4ab510759d0fbaa91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshRenderer: {fileID: 3067043125635508846}
 --- !u!1 &4791309573056403279
 GameObject:
   m_ObjectHideFlags: 0
@@ -5500,15 +5504,15 @@ SkinnedMeshRenderer:
     type: 3}
   m_PrefabInstance: {fileID: 4791309573049112641}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &3557786246351290696 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: ec8a239e263555b4e89a907a0c672c82,
-    type: 3}
-  m_PrefabInstance: {fileID: 4791309573049112641}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &505690022123205467 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: ec8a239e263555b4e89a907a0c672c82,
+    type: 3}
+  m_PrefabInstance: {fileID: 4791309573049112641}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3557786246351290696 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: ec8a239e263555b4e89a907a0c672c82,
     type: 3}
   m_PrefabInstance: {fileID: 4791309573049112641}
   m_PrefabAsset: {fileID: 0}

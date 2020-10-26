@@ -4648,7 +4648,7 @@ GameObject:
   - component: {fileID: 3171544776139956310}
   - component: {fileID: 8189913928828772501}
   m_Layer: 0
-  m_Name: CustomActor_NoFace
+  m_Name: Newton_NoFace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4704,10 +4704,11 @@ MonoBehaviour:
   animator: {fileID: 3171544776139956310}
   customBoneMapping: {fileID: 0}
   positionSpace: 1
-  rotationSpace: 0
+  rotationSpace: 1
   meshRenderer: {fileID: 7214797275273706069}
   face: {fileID: 0}
   autoHideFaceWhenInactive: 1
+  debug: 0
 --- !u!1 &8213428189198654816
 GameObject:
   m_ObjectHideFlags: 0

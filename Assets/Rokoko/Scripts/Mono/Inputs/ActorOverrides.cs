@@ -6,24 +6,32 @@ namespace Rokoko.Inputs
 {
     public class ActorOverrides : MonoBehaviour
     {
-        public List<ActorOverride> actorOverrides = new List<ActorOverride>();
+        private static ActorOverrides instance;
 
-        public Actor GetActorOverride(string profileName)
+        public List<Actor> actorOverrides = new List<Actor>();
+
+        private void Awake()
         {
+            if (instance == null)
+                instance = this;
+        }
+
+        public List<Actor> GetActorOverride(string profileName)
+        {
+            List<Actor> overrides = new List<Actor>();
             for (int i = 0; i < actorOverrides.Count; i++)
             {
                 if (profileName.ToLower() == actorOverrides[i].profileName.ToLower())
-                    return actorOverrides[i].actor;
+                    overrides.Add(actorOverrides[i]);
             }
-            return null;
+            return overrides;
         }
 
-
-        [System.Serializable]
-        public class ActorOverride
+        public static void AddActorOverride(Actor actor)
         {
-            public string profileName;
-            public Actor actor;
+            if (instance == null) return;
+            if (instance.actorOverrides.Contains(actor)) return;
+            instance.actorOverrides.Add(actor);
         }
     }
 }

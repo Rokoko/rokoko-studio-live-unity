@@ -11,6 +11,7 @@ namespace Rokoko.Inputs
         private const int HEAD_TO_MATERIAL_INDEX = 5;
         private const int JOINT_TO_MATERIAL_INDEX = 1;
 
+        [SerializeField] protected Renderer meshRenderer = null;
         [SerializeField] private Material bodyMaterial = null;
         [SerializeField] private Material invisibleMaterial = null;
 
@@ -45,6 +46,11 @@ namespace Rokoko.Inputs
         public override void UpdateActor(ActorFrame actorFrame)
         {
             base.UpdateActor(actorFrame);
+
+            bool updateBody = actorFrame.meta.hasBody || actorFrame.meta.hasGloves;
+
+            // Enable/Disable body renderer
+            meshRenderer.enabled = updateBody;
 
             // Update material color and visibility
             UpdateMaterialColors(actorFrame);

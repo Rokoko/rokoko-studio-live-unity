@@ -99,10 +99,15 @@ public class StudioManager : MonoBehaviour
         {
             ActorFrame actorFrame = frame.scene.actors[i];
 
-            Actor overrideActor = actorOverrides?.GetActorOverride(actorFrame.name);
-            // Update custom actor if any
-            if (overrideActor != null)
-                overrideActor.UpdateActor(actorFrame);
+            List<Actor> actorOverrides = this.actorOverrides?.GetActorOverride(actorFrame.name);
+            // Update custom actors if any
+            if (actorOverrides.Count > 0)
+            {
+                for (int a = 0; a < actorOverrides.Count; a++)
+                {
+                    actorOverrides[a].UpdateActor(actorFrame);
+                }
+            }
             // Update default actor
             else
                 actors[actorFrame.name].UpdateActor(actorFrame);
