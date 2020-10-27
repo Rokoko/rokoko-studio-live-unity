@@ -1,0 +1,2 @@
+For for info about the plugin please visit our page at GitHub
+https://github.com/Rokoko/rokoko-studio-live-unity/
