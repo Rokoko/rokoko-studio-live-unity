@@ -20,7 +20,7 @@ namespace Rokoko.UI
             // Destroy children before PrefabInstancer creates the pool
             prefabContainer.DestroyChildren();
 
-            rows = new PrefabInstancer<string, InputHierarchyRow>(rowPrefab, prefabContainer);
+            rows = new PrefabInstancer<string, InputHierarchyRow>(rowPrefab, prefabContainer, 3);
         }
 
         public void UpdateHierarchy(LiveFrame_v4 dataFrame)

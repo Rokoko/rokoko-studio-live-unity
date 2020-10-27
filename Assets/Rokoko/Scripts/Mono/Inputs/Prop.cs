@@ -21,7 +21,6 @@ namespace Rokoko.Inputs
         public virtual void UpdateProp(PropFrame propFrame)
         {
             propName = propFrame.name;
-            this.gameObject.name = propName;
 
             if (positionSpace == Space.World)
                 this.transform.position = propFrame.position.ToVector3();

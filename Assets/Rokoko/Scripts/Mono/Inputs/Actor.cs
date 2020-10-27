@@ -37,9 +37,8 @@ namespace Rokoko.Inputs
         [Tooltip("Convert Studio data to Unity rotation space")]
         public RotationSpace rotationSpace = RotationSpace.Offset;
 
-        //[Header("Actor Face (Optional)")]
         [HideInInspector] public Face face = null;
-        [HideInInspector] public bool autoHideFaceWhenInactive = true;
+        [HideInInspector] public bool autoHideFaceWhenInactive = false;
 
         private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
 
@@ -92,7 +91,6 @@ namespace Rokoko.Inputs
         public virtual void UpdateActor(ActorFrame actorFrame)
         {
             profileName = actorFrame.name;
-            this.gameObject.name = profileName;
 
             bool updateBody = actorFrame.meta.hasBody || actorFrame.meta.hasGloves;
 

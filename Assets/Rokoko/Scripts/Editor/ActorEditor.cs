@@ -12,17 +12,17 @@ namespace Rokoko.UnityEditor
     {
         SerializedProperty boneMapping;
         SerializedProperty animatorProperty;
-        SerializedProperty customBoneMappingProperty;
         SerializedProperty profileNameProperty;
         SerializedProperty faceProperty;
+        SerializedProperty autoHideFaceWhenInactiveProperty;
 
         protected void OnEnable()
         {
             boneMapping = serializedObject.FindProperty("boneMapping");
             animatorProperty = serializedObject.FindProperty("animator");
-            customBoneMappingProperty = serializedObject.FindProperty("customBoneMapping");
             profileNameProperty = serializedObject.FindProperty("profileName");
             faceProperty = serializedObject.FindProperty("face");
+            autoHideFaceWhenInactiveProperty = serializedObject.FindProperty("autoHideFaceWhenInactive");
         }
 
         // Stops showing the script field
@@ -87,6 +87,8 @@ namespace Rokoko.UnityEditor
                 actor.face = actor.GetComponentInChildren<Face>();
             }
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.PropertyField(autoHideFaceWhenInactiveProperty);
+
 
             serializedObject.ApplyModifiedProperties();
 

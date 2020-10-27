@@ -355,8 +355,8 @@ MonoBehaviour:
   uiManager: {fileID: 5056128649992050367}
   actorOverrides: []
   propOverrides: []
-  autoGenerateInputsWhenNoOverridesFound: 1
-  showDefaultActorWhenNoData: 1
+  autoGenerateInputsWhenNoOverridesFound: 0
+  showDefaultActorWhenNoData: 0
 --- !u!1 &741147617
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,7 +1072,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 46967294, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 81.2421
       objectReference: {fileID: 0}
     - target: {fileID: 46967294, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_AnchorMin.y
@@ -1746,7 +1746,7 @@ PrefabInstance:
     - target: {fileID: 6773956800457302902, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 6773956800457302902, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}

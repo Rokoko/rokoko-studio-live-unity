@@ -10,10 +10,11 @@ public class PrefabPool<T> where T : MonoBehaviour
 
     private Queue<T> pool = new Queue<T>();
 
-    public PrefabPool(T prefab, Transform container)
+    public PrefabPool(T prefab, Transform container, int poolNumber = 3)
     {
         this.prefab = prefab;
         this.container = container;
+        this.poolNumber = poolNumber;
 
         for (int i = 0; i < poolNumber; i++)
         {

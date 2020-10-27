@@ -14,7 +14,7 @@ namespace Rokoko.Inputs
         [Header("Newton materials")]
         [SerializeField] protected Renderer meshRenderer = null;
         [SerializeField] private Material bodyMaterial = null;
-        [SerializeField] private Material invisibleMaterial = null;
+        [SerializeField] private Material faceInvisibleMaterial = null;
 
         #region Initialize
 
@@ -64,7 +64,7 @@ namespace Rokoko.Inputs
         private void UpdateMaterialColors(ActorFrame actorFrame)
         {
             bodyMaterial.color = actorFrame.color.ToColor();
-            meshMaterials[HEAD_TO_MATERIAL_INDEX] = (actorFrame.meta.hasFace) ? invisibleMaterial : bodyMaterial;
+            meshMaterials[HEAD_TO_MATERIAL_INDEX] = (actorFrame.meta.hasFace) ? faceInvisibleMaterial : bodyMaterial;
             meshRenderer.materials = meshMaterials;
 
             face?.SetColor(actorFrame.color.ToColor());
