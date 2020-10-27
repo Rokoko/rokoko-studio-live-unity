@@ -36,7 +36,7 @@ namespace Rokoko.Inputs
         [SerializeField] protected Animator newtonAnimator;
         public bool useOffset = true;
         private BodyPose tPose;
-        private Quaternion[] offsets = new Quaternion[0];
+        private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
 
         [Space(10)]
         public bool debug = false;
@@ -67,32 +67,10 @@ namespace Rokoko.Inputs
             {
                 if (bone == HumanBodyBones.LastBone) break;
                 animatorHumanBones.Add(bone, animator.GetBoneTransform(bone));
-                //if (newtonAnimator.GetBoneTransform(bone) is Transform joint)
-                //    newtonTPose.Add(bone, joint.rotation);
-                //if (animator.GetBoneTransform(bone) is Transform joint2)
-                //    selfOffsets.Add(bone, joint2.rotation);
             }
 
-            if (newtonAnimator != null)
-            {
-                tPose = new BodyPose();
-                tPose.forward = this.transform.forward;
-                tPose.store(animatorHumanBones.Values.ToArray());
-
-                BodyPose newtonPose = new BodyPose();
-                newtonPose.forward = newtonAnimator.transform.forward;
-                Transform[] newtonBones = new Transform[(int)HumanBodyBones.LastBone];
-                for (int i = 0; i < newtonBones.Length; i++)
-                {
-                    newtonBones[i] = newtonAnimator.GetBoneTransform((HumanBodyBones)i);
-                    //if (newtonAnimator.GetBoneTransform(bone) is Transform joint)
-                    //    newtonTPose.Add(bone, joint.rotation);
-                    //if (animator.GetBoneTransform(bone) is Transform joint2)
-                    //    selfOffsets.Add(bone, joint2.rotation);
-                }
-                newtonPose.store(newtonBones);
-                offsets = tPose.ExtractRotationOffsets(newtonPose);
-            }
+            // Calculate offsets based on Smartsuit T pose
+            offsets = GetRotationOffsets(animatorHumanBones);
         }
 
         #endregion
@@ -181,18 +159,94 @@ namespace Rokoko.Inputs
                 boneTransform.rotation = this.transform.parent.rotation * worldRotation;
             }
 
-            if (useOffset && offsets.Length > (int)bone && bone != HumanBodyBones.Hips)
+            if (useOffset && bone != HumanBodyBones.Hips)
             {
                 boneTransform.Rotate(worldRotation.eulerAngles, Space.Self);
-                boneTransform.rotation = this.transform.rotation * jointFrame.rotation.ToQuaternion() * offsets[(int)bone];
+                boneTransform.rotation = this.transform.rotation * jointFrame.rotation.ToQuaternion() * offsets[bone];
             }
         }
 
-        //private Dictionary<HumanBodyBones, Quaternion> newtonTPose = new Dictionary<HumanBodyBones, Quaternion>();
-        //private Dictionary<HumanBodyBones, Quaternion> selfOffsets = new Dictionary<HumanBodyBones, Quaternion>();
+        [System.Serializable]
+        public enum RotationSpace
+        {
+            Offset,
+            World,
+            Self
+        }
 
         #endregion
 
+        private static Dictionary<HumanBodyBones, Quaternion> GetRotationOffsets(Dictionary<HumanBodyBones, Transform> humanoidBones)
+        {
+            Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
+            foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
+            {
+                Quaternion rotation = Quaternion.identity;
+                if (humanoidBones[bone] != null)
+                    rotation = Quaternion.Inverse(newtonTPose[bone]) * humanoidBones[bone].rotation;
+
+                offsets.Add(bone, rotation);
+            }
+            return offsets;
+        }
+
+        private static Dictionary<HumanBodyBones, Quaternion> newtonTPose = new Dictionary<HumanBodyBones, Quaternion>() {
+            {HumanBodyBones.Hips, new Quaternion(0.000f, 0.000f, 0.000f, 1.000f)},
+            {HumanBodyBones.LeftUpperLeg, new Quaternion(0.000f, 0.707f, 0.000f, 0.707f)},
+            {HumanBodyBones.RightUpperLeg, new Quaternion(0.000f, -0.707f, 0.000f, 0.707f)},
+            {HumanBodyBones.LeftLowerLeg, new Quaternion(0.000f, 0.707f, 0.000f, 0.707f)},
+            {HumanBodyBones.RightLowerLeg, new Quaternion(0.000f, -0.707f, 0.000f, 0.707f)},
+            {HumanBodyBones.LeftFoot, new Quaternion(0.000f, 0.707f, -0.707f, 0.000f)},
+            {HumanBodyBones.RightFoot, new Quaternion(0.000f, -0.707f, 0.707f, 0.000f)},
+            {HumanBodyBones.Spine, new Quaternion(0.000f, 0.000f, 1.000f, 0.000f)},
+            {HumanBodyBones.Chest, new Quaternion(0.000f, 0.000f, 1.000f, 0.000f)},
+            {HumanBodyBones.Neck, new Quaternion(0.000f, 0.000f, 1.000f, 0.000f)},
+            {HumanBodyBones.Head, new Quaternion(0.000f, 0.000f, 1.000f, 0.000f)},
+            {HumanBodyBones.LeftShoulder, new Quaternion(0.000f, 0.000f, 0.707f, -0.707f)},
+            {HumanBodyBones.RightShoulder, new Quaternion(0.000f, 0.000f, 0.707f, 0.707f)},
+            {HumanBodyBones.LeftUpperArm, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.RightUpperArm, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.LeftLowerArm, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.RightLowerArm, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.LeftHand, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.RightHand, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.LeftToes, new Quaternion(0.000f, 0.707f, -0.707f, 0.000f)},
+            {HumanBodyBones.RightToes, new Quaternion(0.000f, -0.707f, 0.707f, 0.000f)},
+            {HumanBodyBones.LeftEye, new Quaternion(0.000f, 0.000f, 0.000f, 0.000f)},
+            {HumanBodyBones.RightEye, new Quaternion(0.000f, 0.000f, 0.000f, 0.000f)},
+            {HumanBodyBones.Jaw, new Quaternion(0.000f, 0.000f, 0.000f, 0.000f)},
+            {HumanBodyBones.LeftThumbProximal, new Quaternion(-0.561f, -0.701f, 0.430f, -0.092f)},
+            {HumanBodyBones.LeftThumbIntermediate, new Quaternion(-0.653f, -0.653f, 0.271f, -0.271f)},
+            {HumanBodyBones.LeftThumbDistal, new Quaternion(-0.653f, -0.653f, 0.271f, -0.271f)},
+            {HumanBodyBones.LeftIndexProximal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftIndexIntermediate, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftIndexDistal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftMiddleProximal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftMiddleIntermediate, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftMiddleDistal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftRingProximal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftRingIntermediate, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftRingDistal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftLittleProximal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftLittleIntermediate, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.LeftLittleDistal, new Quaternion(-0.500f, -0.500f, 0.500f, -0.500f)},
+            {HumanBodyBones.RightThumbProximal, new Quaternion(0.561f, -0.701f, 0.430f, 0.092f)},
+            {HumanBodyBones.RightThumbIntermediate, new Quaternion(0.653f, -0.653f, 0.271f, 0.271f)},
+            {HumanBodyBones.RightThumbDistal, new Quaternion(0.653f, -0.653f, 0.271f, 0.271f)},
+            {HumanBodyBones.RightIndexProximal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightIndexIntermediate, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightIndexDistal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightMiddleProximal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightMiddleIntermediate, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightMiddleDistal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightRingProximal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightRingIntermediate, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightRingDistal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightLittleProximal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightLittleIntermediate, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.RightLittleDistal, new Quaternion(0.500f, -0.500f, 0.500f, 0.500f)},
+            {HumanBodyBones.UpperChest, new Quaternion(0.000f, 0.000f, 1.000f, 0.000f)}
+        };
     }
 
 
@@ -203,8 +257,8 @@ namespace Rokoko.Inputs
         public string name;
         public bool stored;
         public Vector3 hip;
-        public Vector3 forward;
         public Quaternion[] rotation;
+
         public int Length
         {
             get
@@ -214,20 +268,11 @@ namespace Rokoko.Inputs
             }
             set { rotation = new Quaternion[value]; }
         }
-        public Vector3 left
-        {
-            get
-            {
-                return Vector3.Cross(forward, Vector3.up);
-            }
-        }
+
         public void store(Transform[] bones)
         {
             Length = bones.Length;
             hip = bones[0].localPosition;
-            if (bones[0].parent == null) forward = bones[0].forward;
-            else forward = bones[0].parent.forward;
-            forward.y = 0; forward.Normalize();
             //Debug.DrawRay(bones[0].position, forward, Color.blue, 5);
             //Debug.DrawRay(bones[0].position, left, Color.red, 3);
             for (int i = 0; i < Length; i++)
@@ -237,43 +282,14 @@ namespace Rokoko.Inputs
             }
             stored = true;
         }
-        public Vector3 estimateForwardFrom(Transform[] bones)
-        {
-            if (stored && bones.Length == Length)
-            {
-                Vector3 ff = Vector3.zero;
-                int c = 0;
-                for (int i = 0; i < Length; i++)
-                {
-                    if (bones[i] != null)
-                    {
-                        ff += (bones[i].rotation * Quaternion.Inverse(rotation[i])) * forward;
-                        c++;
-                    }
-                }
-                return ff / c;
-            }
-            else
-                return forward;
-        }
-        public void applyPoseTo(Transform[] bones)
-        {
-            if (Length == bones.Length)
-            {
-                bones[0].localPosition = hip;
-                for (int i = 0; i < Length; i++) if (bones[i] != null) bones[i].rotation = rotation[i];
-            }
-        }
 
         public Quaternion[] ExtractRotationOffsets(BodyPose other)
         {
             Quaternion[] q = new Quaternion[Mathf.Min(other.rotation.Length, this.rotation.Length)];
             //forward has to be set correctly
-            Quaternion otherforward = Quaternion.Inverse(Quaternion.LookRotation(other.forward));
-            Quaternion thisforward = Quaternion.Inverse(Quaternion.LookRotation(forward));
             for (int i = 0; i < q.Length; i++)
             {
-                q[i] = Quaternion.Inverse(otherforward * other.rotation[i]) * thisforward * this.rotation[i];
+                q[i] = Quaternion.Inverse(other.rotation[i]) * this.rotation[i];
             }
             return q;
         }
@@ -307,7 +323,6 @@ namespace Rokoko.Inputs
             tpose.rotation[(int)HumanBodyBones.RightUpperLeg] = rightLeg;
             tpose.rotation[(int)HumanBodyBones.RightLowerLeg] = rightLeg;
             tpose.rotation[(int)HumanBodyBones.RightFoot] = foot;
-            tpose.forward = Vector3.forward;
             //missing stored
             //missing hipposition
             tpose.name = "SmartsuitTpose";
