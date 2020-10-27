@@ -2092,15 +2092,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7694c1eb6726a2d49a01558f46c8ef83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  profileName: DemoProfile
   boneMapping: 0
   animator: {fileID: 7337014410945170498}
   customBoneMapping: {fileID: 0}
   positionSpace: 1
-  rotationSpace: 1
-  meshRenderer: {fileID: 3310642109320222273}
+  rotationSpace: 0
   face: {fileID: 2039310747}
   autoHideFaceWhenInactive: 1
   debug: 0
+  meshRenderer: {fileID: 3310642109320222273}
   bodyMaterial: {fileID: 2100000, guid: 423b90d678fb1c8408b9143d62e31c74, type: 2}
   invisibleMaterial: {fileID: 2100000, guid: 77c3b338e3957c147a347451541a2339, type: 2}
 --- !u!1 &4094031154225715126

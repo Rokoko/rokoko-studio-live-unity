@@ -358,7 +358,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1858944977}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &68795061
 GameObject:
@@ -2183,7 +2183,7 @@ PrefabInstance:
     - target: {fileID: 6773956800489933356, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6773956800489933356, guid: bc90cf8ecd1a41c42bd2bc08d5539e38,
         type: 3}
@@ -6292,10 +6292,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 55885474}
   - {fileID: 1412149338}
   - {fileID: 465945201}
   - {fileID: 2050793607}
+  - {fileID: 55885474}
   - {fileID: 1159439385}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -6789,7 +6789,7 @@ Transform:
   - {fileID: 1916364061}
   - {fileID: 1782777868}
   m_Father: {fileID: 1858944977}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2060541212
 GameObject:
@@ -7089,7 +7089,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4565898510181698, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4565898510181698, guid: 024fe78707b0a9e4599b8093e621eaa7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7302,11 +7302,6 @@ PrefabInstance:
       propertyPath: debug
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8189913928828772501, guid: 45a3ed8bac3c96c4297dcd116a155351,
-        type: 3}
-      propertyPath: profileName
-      value: Ryan
-      objectReference: {fileID: 0}
     - target: {fileID: 8189913928828772502, guid: 45a3ed8bac3c96c4297dcd116a155351,
         type: 3}
       propertyPath: m_Name
@@ -7386,11 +7381,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: CustomActor_CustomSkeletonMap
       objectReference: {fileID: 0}
-    - target: {fileID: 4791309571641307522, guid: fe3b0c434bb22024aaddb5f7564faa14,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4791309571641307523, guid: fe3b0c434bb22024aaddb5f7564faa14,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7445,16 +7435,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4791309573049112653, guid: fe3b0c434bb22024aaddb5f7564faa14,
-        type: 3}
-      propertyPath: blendshapeMapping
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4791309573049112653, guid: fe3b0c434bb22024aaddb5f7564faa14,
-        type: 3}
-      propertyPath: blendshapeCustomMap
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe3b0c434bb22024aaddb5f7564faa14, type: 3}

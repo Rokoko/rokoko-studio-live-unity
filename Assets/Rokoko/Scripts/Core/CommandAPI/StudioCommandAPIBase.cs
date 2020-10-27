@@ -17,7 +17,8 @@ namespace Rokoko.CommandAPI
         [Tooltip("The port number as defined in Studio. Settings->Command API->Listen port")]
         public int port;
 
-        [Space(10)] public bool debug;
+        [Header("Log extra info")]
+        public bool debug;
 
         protected abstract string IP { get; }
 

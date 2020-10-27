@@ -5,9 +5,12 @@ namespace Rokoko.CommandAPI
 {
     public class StudioCommandAPI : StudioCommandAPIBase
     {
+        [Header("Show CommandAPI response (Optional)")]
         [SerializeField] private Text responseText = null;
 
-        public string ipAddress;
+        [Header("The IP address of Studio. Leave default for same machine")]
+        public string ipAddress = "127.0.0.1";
+
         protected override string IP => ipAddress;
         protected override RequestData GetRequestData() => new RequestData();
 

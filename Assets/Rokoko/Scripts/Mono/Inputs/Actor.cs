@@ -53,17 +53,21 @@ namespace Rokoko.Inputs
 
         protected virtual void Awake()
         {
-            animator = this.GetComponent<Animator>();
             InitializeBodyBones();
         }
 
+        /// <summary>
+        /// Register Actor override in StudioManager.
+        /// </summary>
         private void Start()
         {
             if (!string.IsNullOrEmpty(profileName))
                 StudioManager.AddActorOverride(this);
         }
 
-        // Cache the bone transforms from Animator
+        /// <summary>
+        /// Cache the bone transforms from Animator.
+        /// </summary>
         protected void InitializeBodyBones()
         {
             if (animator == null) return;
@@ -82,6 +86,9 @@ namespace Rokoko.Inputs
 
         #region Public Methods
 
+        /// <summary>
+        /// Update Skeleton and Face data based on ActorFrame.
+        /// </summary>
         public virtual void UpdateActor(ActorFrame actorFrame)
         {
             profileName = actorFrame.name;
@@ -102,6 +109,9 @@ namespace Rokoko.Inputs
                 face?.UpdateFace(actorFrame.face);
         }
 
+        /// <summary>
+        /// Create Idle/Default Actor.
+        /// </summary>
         public virtual void CreateIdle(string actorName)
         {
             this.profileName = actorName;
@@ -114,6 +124,9 @@ namespace Rokoko.Inputs
 
         #region Internal Logic
 
+        /// <summary>
+        /// Update Humanoid Skeleton based on BodyData.
+        /// </summary>
         protected void UpdateSkeleton(BodyFrame bodyFrame)
         {
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
@@ -121,21 +134,28 @@ namespace Rokoko.Inputs
                 if (bone == HumanBodyBones.LastBone) break;
                 ActorJointFrame? boneFrame = bodyFrame.GetBoneFrame(bone);
                 if (boneFrame != null)
-                    UpdateBone(bone, boneFrame.Value, bone == HumanBodyBones.Hips, positionSpace, rotationSpace);
+                {
+                    bool shouldUpdatePosition = bone == HumanBodyBones.Hips;
+                    Vector3 worldPosition = boneFrame.Value.position.ToVector3();
+                    Quaternion worldRotation = boneFrame.Value.rotation.ToQuaternion();
+                    UpdateBone(bone, worldPosition, worldRotation, shouldUpdatePosition, positionSpace, rotationSpace);
+                }
             }
-
-            //THIS IS THE LERP FIX THAT OVERRIDES FIRMWARE LERP FOR A1 SENSOR
-            //rotations[(int)HumanBodyBones.Spine] = Quaternion.Lerp(rotations[(int)HumanBodyBones.Hips], rotations[(int)HumanBodyBones.Chest], 0.5f);
         }
 
-        protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame, bool updatePosition, Space positionSpace, RotationSpace rotationSpace)
+        /// <summary>
+        /// Update Human bone.
+        /// </summary>
+        protected void UpdateBone(HumanBodyBones bone, Vector3 worldPosition, Quaternion worldRotation, bool updatePosition, Space positionSpace, RotationSpace rotationSpace)
         {
+            // Find Humanoid bone
             Transform boneTransform = null;
             if (boneMapping == BoneMappingEnum.Animator)
                 boneTransform = animatorHumanBones[bone];
             else
                 boneTransform = customBoneMapping.customBodyBones[(int)bone];
 
+            // Check if bone is valid
             if (boneTransform == null)
             {
                 if (debug)
@@ -143,34 +163,43 @@ namespace Rokoko.Inputs
                 return;
             }
 
+            // Update position
             if (updatePosition)
             {
                 if (positionSpace == Space.World)
-                    boneTransform.position = jointFrame.position.ToVector3();
+                    boneTransform.position = worldPosition;
                 else
                 {
                     if (transform.parent != null)
-                        boneTransform.localPosition = jointFrame.position.ToVector3();
+                        boneTransform.localPosition = worldPosition;
                     else
-                        boneTransform.position = jointFrame.position.ToVector3();
+                        boneTransform.position = worldPosition;
                 }
             }
 
-            Quaternion worldRotation = jointFrame.rotation.ToQuaternion();
+            // Update Rotation
             if (rotationSpace == RotationSpace.World)
+            {
                 boneTransform.rotation = worldRotation;
+            }
             else if (rotationSpace == RotationSpace.Self)
             {
-                boneTransform.rotation = this.transform.parent.rotation * worldRotation;
+                if (transform.parent != null)
+                    boneTransform.rotation = this.transform.parent.rotation * worldRotation;
+                else
+                    boneTransform.rotation = worldRotation;
             }
             else
             {
-                boneTransform.rotation = this.transform.rotation * jointFrame.rotation.ToQuaternion() * offsets[bone];
+                boneTransform.rotation = this.transform.rotation * worldRotation * offsets[bone];
             }
         }
 
         #endregion
 
+        /// <summary>
+        /// Get the rotational difference between 2 humanoid T poses.
+        /// </summary>
         private static Dictionary<HumanBodyBones, Quaternion> GetRotationOffsets(Dictionary<HumanBodyBones, Transform> humanoidBones)
         {
             Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
@@ -185,6 +214,9 @@ namespace Rokoko.Inputs
             return offsets;
         }
 
+        /// <summary>
+        /// Get Smartsuit T pose data
+        /// </summary>
         private static Dictionary<HumanBodyBones, Quaternion> SmartsuitTPose = new Dictionary<HumanBodyBones, Quaternion>() {
             {HumanBodyBones.Hips, new Quaternion(0.000f, 0.000f, 0.000f, 1.000f)},
             {HumanBodyBones.LeftUpperLeg, new Quaternion(0.000f, 0.707f, 0.000f, 0.707f)},

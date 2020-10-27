@@ -18,7 +18,7 @@ public class StudioManager : MonoBehaviour
     [Tooltip("ReceivePort must match Studio Live Stream port settings")]
     public int receivePort = 14043;
 
-    [Header("Default Actors")]
+    [Header("Default Inputs - Used when no overrides found")]
     [Tooltip("Actor Prefab to create actors when no overrides found")]
     public Actor actorPrefab;
     [Tooltip("Prop Prefab to create props when no overrides found")]

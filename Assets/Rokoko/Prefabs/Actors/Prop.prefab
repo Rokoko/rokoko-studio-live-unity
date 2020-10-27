@@ -92,3 +92,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8274508f93c440949969e644e7b64e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  propName: Camera-1
+  positionSpace: 1
+  rotationSpace: 1

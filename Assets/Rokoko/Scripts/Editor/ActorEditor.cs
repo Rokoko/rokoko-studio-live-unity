@@ -65,11 +65,15 @@ namespace Rokoko.UnityEditor
             }
             else
             {
-                EditorGUILayout.PropertyField(customBoneMappingProperty);
+                //EditorGUILayout.PropertyField(customBoneMappingProperty);
                 if (actor.GetComponent<HumanBoneMapping>() == null)
                 {
                     Undo.RecordObject(actor.gameObject, "Undo Actor Changes");
                     actor.customBoneMapping = Undo.AddComponent(actor.gameObject, typeof(HumanBoneMapping)) as HumanBoneMapping;
+                }
+                else if(actor.customBoneMapping == null)
+                {
+                    actor.customBoneMapping = actor.GetComponent<HumanBoneMapping>();
                 }
             }
 

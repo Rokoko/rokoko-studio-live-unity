@@ -4700,12 +4700,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3d830ef66b485459e15992199096b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  profileName: DemoProfile
   boneMapping: 0
   animator: {fileID: 3171544776139956310}
   customBoneMapping: {fileID: 0}
   positionSpace: 1
-  rotationSpace: 1
-  meshRenderer: {fileID: 7214797275273706069}
+  rotationSpace: 0
   face: {fileID: 0}
   autoHideFaceWhenInactive: 1
   debug: 0
