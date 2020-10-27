@@ -41,7 +41,8 @@ namespace Rokoko.UnityEditor
             EditorGUILayout.HelpBox("Profile name allows you to override any target from studio", MessageType.Info);
             EditorGUILayout.PropertyField(profileNameProperty);
 
-            EditorGUILayout.Space(10);
+            GUILayout.Space(10);
+
             EditorGUILayout.HelpBox("Bone mapping is used to convert a Studio Actor to any custom character hierarchy", MessageType.Info);
             EditorGUILayout.PropertyField(boneMapping);
             if (actor.boneMapping == Actor.BoneMappingEnum.Animator)
@@ -65,7 +66,6 @@ namespace Rokoko.UnityEditor
             }
             else
             {
-                //EditorGUILayout.PropertyField(customBoneMappingProperty);
                 if (actor.GetComponent<HumanBoneMapping>() == null)
                 {
                     Undo.RecordObject(actor.gameObject, "Undo Actor Changes");
@@ -77,7 +77,7 @@ namespace Rokoko.UnityEditor
                 }
             }
 
-            EditorGUILayout.Space(10);
+            GUILayout.Space(10);
 
             EditorGUILayout.LabelField("Actor Face (Optional)", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();

@@ -25,7 +25,8 @@ namespace Rokoko.UnityEditor
             PropColor propColor = (PropColor)target;
             serializedObject.Update();
 
-            EditorGUILayout.Space(10);
+            GUILayout.Space(10);
+
             EditorGUILayout.LabelField("Update mesh color", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(meshRendererProperty);
