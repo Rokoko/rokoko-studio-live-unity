@@ -7,9 +7,9 @@ public class PrefabInstancer<T, P> where P : MonoBehaviour
     private PrefabPool<P> pool;
     private Dictionary<T, P> objects;
 
-    public PrefabInstancer(P prefab, Transform container)
+    public PrefabInstancer(P prefab, Transform container, int poolNumber = 0)
     {
-        pool = new PrefabPool<P>(prefab, container);
+        pool = new PrefabPool<P>(prefab, container, poolNumber);
         objects = new Dictionary<T, P>();
     }
 

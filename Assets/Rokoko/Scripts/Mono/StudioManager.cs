@@ -18,13 +18,13 @@ public class StudioManager : MonoBehaviour
     [Tooltip("ReceivePort must match Studio Live Stream port settings")]
     public int receivePort = 14043;
 
-    [Header("Default Inputs - Used when no overrides found")]
+    [Header("Default Inputs - Used when no overrides found (Optional)")]
     [Tooltip("Actor Prefab to create actors when no overrides found")]
     public Actor actorPrefab;
     [Tooltip("Prop Prefab to create props when no overrides found")]
     public Prop propPrefab;
 
-    [Header("UI")]
+    [Header("UI (Optional)")]
     public UIHierarchyManager uiManager;
 
     [Header("Input Overrides - Automatically updated")]
@@ -32,8 +32,8 @@ public class StudioManager : MonoBehaviour
     public List<Prop> propOverrides = new List<Prop>();
 
     [Header("Extra Behiavours")]
-    public bool autoGenerateInputsWhenNoOverridesFound = true;
-    public bool showDefaultActorWhenNoData = true;
+    public bool autoGenerateInputsWhenNoOverridesFound = false;
+    public bool showDefaultActorWhenNoData = false;
 
     private StudioReceiver studioReceiver;
     private PrefabInstancer<string, Actor> actors;
@@ -58,8 +58,11 @@ public class StudioManager : MonoBehaviour
         studioReceiver.StartListening();
         studioReceiver.onStudioDataReceived += StudioReceiver_onStudioDataReceived;
 
-        actors = new PrefabInstancer<string, Actor>(actorPrefab, this.transform);
-        props = new PrefabInstancer<string, Prop>(propPrefab, this.transform);
+        if (actorPrefab != null)
+            actors = new PrefabInstancer<string, Actor>(actorPrefab, this.transform);
+
+        if (propPrefab != null)
+            props = new PrefabInstancer<string, Prop>(propPrefab, this.transform);
 
         yield return null;
 
@@ -127,7 +130,7 @@ public class StudioManager : MonoBehaviour
                 }
             }
             // Update default actor
-            else if (autoGenerateInputsWhenNoOverridesFound)
+            else if (autoGenerateInputsWhenNoOverridesFound && actors != null)
             {
                 actors[actorFrame.name].UpdateActor(actorFrame);
             }
@@ -148,14 +151,14 @@ public class StudioManager : MonoBehaviour
                 }
             }
             // Update default prop
-            else if (autoGenerateInputsWhenNoOverridesFound)
+            else if (autoGenerateInputsWhenNoOverridesFound && props != null)
             {
                 props[propFrame.name].UpdateProp(propFrame);
             }
         }
 
         // Remove all default Actors that doesn't exist in data 
-        ClearUnusedDefaultActors(frame);
+        ClearUnusedDefaultInputs(frame);
 
         // Show default character
         UpdateDefaultActorWhenIdle();
@@ -170,6 +173,7 @@ public class StudioManager : MonoBehaviour
     private void UpdateDefaultActorWhenIdle()
     {
         if (!showDefaultActorWhenNoData) return;
+        if (actors == null || props == null) return;
 
         // Crate default actor
         if (actors.Count == 0 && props.Count == 0)
@@ -191,21 +195,27 @@ public class StudioManager : MonoBehaviour
     /// <summary>
     /// Remove all default Actors that doesn't exist in data 
     /// </summary>
-    private void ClearUnusedDefaultActors(LiveFrame_v4 frame)
+    private void ClearUnusedDefaultInputs(LiveFrame_v4 frame)
     {
-        foreach (Actor actor in new List<Actor>((IEnumerable<Actor>)actors.Values))
+        if (actors != null)
         {
-            // Don't remove idle demo
-            if (actor.profileName == ACTOR_DEMO_IDLE_NAME) continue;
+            foreach (Actor actor in new List<Actor>((IEnumerable<Actor>)actors.Values))
+            {
+                // Don't remove idle demo
+                if (actor.profileName == ACTOR_DEMO_IDLE_NAME) continue;
 
-            if (!frame.HasProfile(actor.profileName))
-                actors.Remove(actor.profileName);
+                if (!frame.HasProfile(actor.profileName))
+                    actors.Remove(actor.profileName);
+            }
         }
 
-        foreach (Prop prop in new List<Prop>((IEnumerable<Prop>)props.Values))
+        if (props != null)
         {
-            if (!frame.HasProp(prop.propName))
-                props.Remove(prop.propName);
+            foreach (Prop prop in new List<Prop>((IEnumerable<Prop>)props.Values))
+            {
+                if (!frame.HasProp(prop.propName))
+                    props.Remove(prop.propName);
+            }
         }
     }
 

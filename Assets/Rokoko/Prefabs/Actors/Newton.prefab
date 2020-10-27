@@ -2108,7 +2108,8 @@ MonoBehaviour:
   debug: 0
   meshRenderer: {fileID: 3310642109320222273}
   bodyMaterial: {fileID: 2100000, guid: 423b90d678fb1c8408b9143d62e31c74, type: 2}
-  invisibleMaterial: {fileID: 2100000, guid: 77c3b338e3957c147a347451541a2339, type: 2}
+  faceInvisibleMaterial: {fileID: 2100000, guid: 77c3b338e3957c147a347451541a2339,
+    type: 2}
 --- !u!1 &4094031154225715126
 GameObject:
   m_ObjectHideFlags: 0
