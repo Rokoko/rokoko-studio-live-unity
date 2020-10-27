@@ -11,6 +11,7 @@ namespace Rokoko.Inputs
         private const int HEAD_TO_MATERIAL_INDEX = 5;
         private const int JOINT_TO_MATERIAL_INDEX = 1;
 
+        [Header("Newton materials")]
         [SerializeField] protected Renderer meshRenderer = null;
         [SerializeField] private Material bodyMaterial = null;
         [SerializeField] private Material invisibleMaterial = null;

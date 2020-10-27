@@ -8,18 +8,17 @@ namespace Rokoko.Inputs
 {
     public class Prop : MonoBehaviour
     {
-        public string propName { get; private set; }
+        [HideInInspector] public string propName;
         public Space positionSpace = Space.Self;
         public Space rotationSpace = Space.Self;
 
-        private MeshRenderer meshRenderer;
-
-        private void Awake()
+        protected virtual void Start()
         {
-            meshRenderer = this.GetComponent<MeshRenderer>();
+            if (!string.IsNullOrEmpty(propName))
+                StudioManager.AddPropOverride(this);
         }
 
-        public void UpdateProp(PropFrame propFrame)
+        public virtual void UpdateProp(PropFrame propFrame)
         {
             propName = propFrame.name;
             this.gameObject.name = propName;
@@ -33,10 +32,12 @@ namespace Rokoko.Inputs
             if (rotationSpace == Space.World)
                 this.transform.rotation = worldRotation;
             else
-                this.transform.rotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
-
-            if (meshRenderer != null)
-                meshRenderer.material.color = propFrame.color.ToColor();
+            {
+                if (transform.parent != null)
+                    this.transform.rotation = Quaternion.Inverse(transform.parent.rotation) * worldRotation;
+                else
+                    this.transform.rotation = worldRotation;
+            }
         }
     }
 }

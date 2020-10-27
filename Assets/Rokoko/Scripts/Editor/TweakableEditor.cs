@@ -11,8 +11,8 @@
 public abstract class TweakableEditor : Editor
 {
     private static readonly string[] _emptyStringArray = new string[0];
-     
-     public override void OnInspectorGUI()
+
+    public override void OnInspectorGUI()
     {
         serializedObject.Update();
 

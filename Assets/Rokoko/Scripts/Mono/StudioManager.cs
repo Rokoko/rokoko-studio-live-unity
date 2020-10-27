@@ -12,18 +12,29 @@ public class StudioManager : MonoBehaviour
 {
     private const string ACTOR_DEMO_IDLE_NAME = "ActorIdle";
 
+    private static StudioManager instance;
+
     [Header("Network")]
+    [Tooltip("ReceivePort must match Studio Live Stream port settings")]
     public int receivePort = 14043;
 
     [Header("Default Actors")]
+    [Tooltip("Actor Prefab to create actors when no overrides found")]
     public Actor actorPrefab;
+    [Tooltip("Prop Prefab to create props when no overrides found")]
     public Prop propPrefab;
-    public bool showDefaultActorWhenNoData = true;
 
     [Header("UI")]
     public UIHierarchyManager uiManager;
 
-    private ActorOverrides actorOverrides;
+    [Header("Input Overrides - Automatically updated")]
+    public List<Actor> actorOverrides = new List<Actor>();
+    public List<Prop> propOverrides = new List<Prop>();
+
+    [Header("Extra Behiavours")]
+    public bool autoGenerateInputsWhenNoOverridesFound = true;
+    public bool showDefaultActorWhenNoData = true;
+
     private StudioReceiver studioReceiver;
     private PrefabInstancer<string, Actor> actors;
     private PrefabInstancer<string, Prop> props;
@@ -32,8 +43,14 @@ public class StudioManager : MonoBehaviour
 
     #region MonoBehaviour
 
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+    }
+
     // Start is called before the first frame update
-    private void Start()
+    private IEnumerator Start()
     {
         studioReceiver = new StudioReceiver();
         studioReceiver.receivePortNumber = receivePort;
@@ -44,8 +61,9 @@ public class StudioManager : MonoBehaviour
         actors = new PrefabInstancer<string, Actor>(actorPrefab, this.transform);
         props = new PrefabInstancer<string, Prop>(propPrefab, this.transform);
 
-        actorOverrides = this.GetComponent<ActorOverrides>();
-        if (actorOverrides == null || actorOverrides.actorOverrides.Count == 0)
+        yield return null;
+
+        if (actorOverrides.Count == 0)
         {
             Debug.Log("No custom characters found. Will generate scene from default ones");
         }
@@ -99,7 +117,7 @@ public class StudioManager : MonoBehaviour
         {
             ActorFrame actorFrame = frame.scene.actors[i];
 
-            List<Actor> actorOverrides = this.actorOverrides?.GetActorOverride(actorFrame.name);
+            List<Actor> actorOverrides = GetActorOverride(actorFrame.name);
             // Update custom actors if any
             if (actorOverrides.Count > 0)
             {
@@ -109,15 +127,31 @@ public class StudioManager : MonoBehaviour
                 }
             }
             // Update default actor
-            else
+            else if (autoGenerateInputsWhenNoOverridesFound)
+            {
                 actors[actorFrame.name].UpdateActor(actorFrame);
+            }
         }
 
         // Update each prop from live data
         for (int i = 0; i < frame.scene.props.Length; i++)
         {
             PropFrame propFrame = frame.scene.props[i];
-            props[propFrame.name].UpdateProp(propFrame);
+
+            List<Prop> propOverrides = GetPropOverride(propFrame.name);
+            // Update custom props if any
+            if (propOverrides.Count > 0)
+            {
+                for (int a = 0; a < propOverrides.Count; a++)
+                {
+                    propOverrides[a].UpdateProp(propFrame);
+                }
+            }
+            // Update default prop
+            else if (autoGenerateInputsWhenNoOverridesFound)
+            {
+                props[propFrame.name].UpdateProp(propFrame);
+            }
         }
 
         // Remove all default Actors that doesn't exist in data 
@@ -175,4 +209,39 @@ public class StudioManager : MonoBehaviour
         }
     }
 
+    public List<Actor> GetActorOverride(string profileName)
+    {
+        List<Actor> overrides = new List<Actor>();
+        for (int i = 0; i < actorOverrides.Count; i++)
+        {
+            if (profileName.ToLower() == actorOverrides[i].profileName.ToLower())
+                overrides.Add(actorOverrides[i]);
+        }
+        return overrides;
+    }
+
+    public List<Prop> GetPropOverride(string profileName)
+    {
+        List<Prop> overrides = new List<Prop>();
+        for (int i = 0; i < propOverrides.Count; i++)
+        {
+            if (profileName.ToLower() == propOverrides[i].propName.ToLower())
+                overrides.Add(propOverrides[i]);
+        }
+        return overrides;
+    }
+
+    public static void AddActorOverride(Actor actor)
+    {
+        if (instance == null) return;
+        if (instance.actorOverrides.Contains(actor)) return;
+        instance.actorOverrides.Add(actor);
+    }
+
+    public static void AddPropOverride(Prop prop)
+    {
+        if (instance == null) return;
+        if (instance.propOverrides.Contains(prop)) return;
+        instance.propOverrides.Add(prop);
+    }
 }

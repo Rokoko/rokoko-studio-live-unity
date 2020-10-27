@@ -17,28 +17,33 @@ namespace Rokoko.Inputs
             Custom
         }
 
+        [System.Serializable]
+        public enum RotationSpace
+        {
+            Offset,
+            World,
+            Self
+        }
+
+        [HideInInspector] public string profileName = "DemoProfile";
+
         [HideInInspector] public BoneMappingEnum boneMapping;
         [HideInInspector] public Animator animator;
         [HideInInspector] public HumanBoneMapping customBoneMapping;
 
         [Header("Convert Space")]
+        [Tooltip("Convert Studio data to Unity position space")]
         public Space positionSpace = Space.Self;
-        public Space rotationSpace = Space.Self;
+        [Tooltip("Convert Studio data to Unity rotation space")]
+        public RotationSpace rotationSpace = RotationSpace.Offset;
 
-        public string profileName;
+        //[Header("Actor Face (Optional)")]
+        [HideInInspector] public Face face = null;
+        [HideInInspector] public bool autoHideFaceWhenInactive = true;
 
-        [Header("Actor Face (Optional)")]
-        [SerializeField] protected Face face = null;
-        [SerializeField] protected bool autoHideFaceWhenInactive = true;
-
-
-        [Header("WIP")]
-        [SerializeField] protected Animator newtonAnimator;
-        public bool useOffset = true;
-        private BodyPose tPose;
         private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
 
-        [Space(10)]
+        [Header("Log extra info")]
         public bool debug = false;
 
         protected Dictionary<HumanBodyBones, Transform> animatorHumanBones = new Dictionary<HumanBodyBones, Transform>();
@@ -55,7 +60,7 @@ namespace Rokoko.Inputs
         private void Start()
         {
             if (!string.IsNullOrEmpty(profileName))
-                ActorOverrides.AddActorOverride(this);
+                StudioManager.AddActorOverride(this);
         }
 
         // Cache the bone transforms from Animator
@@ -116,19 +121,14 @@ namespace Rokoko.Inputs
                 if (bone == HumanBodyBones.LastBone) break;
                 ActorJointFrame? boneFrame = bodyFrame.GetBoneFrame(bone);
                 if (boneFrame != null)
-                    UpdateBone(bone, boneFrame.Value, bone == HumanBodyBones.Hips, positionSpace, Space.World);
-            }
-
-            if (rotationSpace == Space.Self)
-            {
-                UpdateBone(HumanBodyBones.Hips, bodyFrame.GetBoneFrame(HumanBodyBones.Hips).Value, false, positionSpace, Space.Self);
+                    UpdateBone(bone, boneFrame.Value, bone == HumanBodyBones.Hips, positionSpace, rotationSpace);
             }
 
             //THIS IS THE LERP FIX THAT OVERRIDES FIRMWARE LERP FOR A1 SENSOR
             //rotations[(int)HumanBodyBones.Spine] = Quaternion.Lerp(rotations[(int)HumanBodyBones.Hips], rotations[(int)HumanBodyBones.Chest], 0.5f);
         }
 
-        protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame, bool updatePosition, Space positionSpace, Space rotationSpace)
+        protected void UpdateBone(HumanBodyBones bone, ActorJointFrame jointFrame, bool updatePosition, Space positionSpace, RotationSpace rotationSpace)
         {
             Transform boneTransform = null;
             if (boneMapping == BoneMappingEnum.Animator)
@@ -148,30 +148,25 @@ namespace Rokoko.Inputs
                 if (positionSpace == Space.World)
                     boneTransform.position = jointFrame.position.ToVector3();
                 else
-                    boneTransform.localPosition = jointFrame.position.ToVector3();
+                {
+                    if (transform.parent != null)
+                        boneTransform.localPosition = jointFrame.position.ToVector3();
+                    else
+                        boneTransform.position = jointFrame.position.ToVector3();
+                }
             }
 
             Quaternion worldRotation = jointFrame.rotation.ToQuaternion();
-            if (rotationSpace == Space.World)
+            if (rotationSpace == RotationSpace.World)
                 boneTransform.rotation = worldRotation;
-            else
+            else if (rotationSpace == RotationSpace.Self)
             {
                 boneTransform.rotation = this.transform.parent.rotation * worldRotation;
             }
-
-            if (useOffset && bone != HumanBodyBones.Hips)
+            else
             {
-                boneTransform.Rotate(worldRotation.eulerAngles, Space.Self);
                 boneTransform.rotation = this.transform.rotation * jointFrame.rotation.ToQuaternion() * offsets[bone];
             }
-        }
-
-        [System.Serializable]
-        public enum RotationSpace
-        {
-            Offset,
-            World,
-            Self
         }
 
         #endregion
@@ -183,14 +178,14 @@ namespace Rokoko.Inputs
             {
                 Quaternion rotation = Quaternion.identity;
                 if (humanoidBones[bone] != null)
-                    rotation = Quaternion.Inverse(newtonTPose[bone]) * humanoidBones[bone].rotation;
+                    rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * humanoidBones[bone].rotation;
 
                 offsets.Add(bone, rotation);
             }
             return offsets;
         }
 
-        private static Dictionary<HumanBodyBones, Quaternion> newtonTPose = new Dictionary<HumanBodyBones, Quaternion>() {
+        private static Dictionary<HumanBodyBones, Quaternion> SmartsuitTPose = new Dictionary<HumanBodyBones, Quaternion>() {
             {HumanBodyBones.Hips, new Quaternion(0.000f, 0.000f, 0.000f, 1.000f)},
             {HumanBodyBones.LeftUpperLeg, new Quaternion(0.000f, 0.707f, 0.000f, 0.707f)},
             {HumanBodyBones.RightUpperLeg, new Quaternion(0.000f, -0.707f, 0.000f, 0.707f)},
@@ -248,87 +243,4 @@ namespace Rokoko.Inputs
             {HumanBodyBones.UpperChest, new Quaternion(0.000f, 0.000f, 1.000f, 0.000f)}
         };
     }
-
-
-
-    [System.Serializable]
-    internal struct BodyPose
-    {
-        public string name;
-        public bool stored;
-        public Vector3 hip;
-        public Quaternion[] rotation;
-
-        public int Length
-        {
-            get
-            {
-                if (rotation != null) return rotation.Length;
-                else return 0;
-            }
-            set { rotation = new Quaternion[value]; }
-        }
-
-        public void store(Transform[] bones)
-        {
-            Length = bones.Length;
-            hip = bones[0].localPosition;
-            //Debug.DrawRay(bones[0].position, forward, Color.blue, 5);
-            //Debug.DrawRay(bones[0].position, left, Color.red, 3);
-            for (int i = 0; i < Length; i++)
-            {
-                if (bones[i] != null)
-                    rotation[i] = bones[i].rotation;
-            }
-            stored = true;
-        }
-
-        public Quaternion[] ExtractRotationOffsets(BodyPose other)
-        {
-            Quaternion[] q = new Quaternion[Mathf.Min(other.rotation.Length, this.rotation.Length)];
-            //forward has to be set correctly
-            for (int i = 0; i < q.Length; i++)
-            {
-                q[i] = Quaternion.Inverse(other.rotation[i]) * this.rotation[i];
-            }
-            return q;
-        }
-
-        internal static BodyPose SmartsuitTpose()
-        {
-            BodyPose tpose = new BodyPose();
-            tpose.Length = 19;
-            var spine = Quaternion.Euler(0, 0, 180);
-            var leftArm = Quaternion.Euler(90, 0, -90);
-            var rightArm = Quaternion.Euler(90, 0, 90);
-            var leftLeg = Quaternion.Euler(0, 90, 0);
-            var rightLeg = Quaternion.Euler(0, -90, 0);
-            var foot = Quaternion.Euler(90, 180, 0);
-            tpose.rotation[(int)HumanBodyBones.LeftShoulder] = Quaternion.Euler(0, 0, -90);
-            tpose.rotation[(int)HumanBodyBones.RightShoulder] = Quaternion.Euler(0, 0, 90);
-            tpose.rotation[(int)HumanBodyBones.Hips] = spine;
-            tpose.rotation[(int)HumanBodyBones.Spine] = spine;
-            tpose.rotation[(int)HumanBodyBones.Chest] = spine;
-            tpose.rotation[(int)HumanBodyBones.Neck] = spine;
-            tpose.rotation[(int)HumanBodyBones.Head] = spine;
-            tpose.rotation[(int)HumanBodyBones.LeftUpperArm] = leftArm;
-            tpose.rotation[(int)HumanBodyBones.LeftLowerArm] = leftArm;
-            tpose.rotation[(int)HumanBodyBones.LeftHand] = leftArm;
-            tpose.rotation[(int)HumanBodyBones.RightUpperArm] = rightArm;
-            tpose.rotation[(int)HumanBodyBones.RightLowerArm] = rightArm;
-            tpose.rotation[(int)HumanBodyBones.RightHand] = rightArm;
-            tpose.rotation[(int)HumanBodyBones.LeftUpperLeg] = leftLeg;
-            tpose.rotation[(int)HumanBodyBones.LeftLowerLeg] = leftLeg;
-            tpose.rotation[(int)HumanBodyBones.LeftFoot] = foot;
-            tpose.rotation[(int)HumanBodyBones.RightUpperLeg] = rightLeg;
-            tpose.rotation[(int)HumanBodyBones.RightLowerLeg] = rightLeg;
-            tpose.rotation[(int)HumanBodyBones.RightFoot] = foot;
-            //missing stored
-            //missing hipposition
-            tpose.name = "SmartsuitTpose";
-            return tpose;
-        }
-    }
-
-
 }
