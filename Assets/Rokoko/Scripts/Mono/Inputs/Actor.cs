@@ -205,7 +205,12 @@ namespace Rokoko.Inputs
             {
                 Quaternion rotation = Quaternion.identity;
                 if (humanoidBones[bone] != null)
-                    rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * humanoidBones[bone].rotation;
+                {
+                    // Subtract Root orientation from bone
+                    Quaternion boneTransform = Quaternion.Inverse(humanoidBones[HumanBodyBones.Hips].rotation) * humanoidBones[bone].rotation;
+                    // Subtract from SmartSuit T Pose
+                    rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * boneTransform;
+                }
 
                 offsets.Add(bone, rotation);
             }
