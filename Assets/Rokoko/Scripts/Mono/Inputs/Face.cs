@@ -22,6 +22,8 @@ namespace Rokoko.Inputs
         [HideInInspector] public BlendShapesMapping blendshapeCustomMap;
 
         [SerializeField] private SkinnedMeshRenderer meshRenderer = null;
+
+        [Header("Log extra info")]
         public bool debug = false;
 
         private Dictionary<string, int> blendshapeNamesToIndex = new Dictionary<string, int>();
