@@ -1,4 +1,4 @@
-<h1 align="center">Rokoko Studio Live Plugin for Unreal Engine</h1>
+<h1 align="center">Rokoko Studio Live Plugin for Unity</h1>
 
 [Rokoko Studio](https://www.rokoko.com/en/products/studio) is a powerful and intuitive software for recording, visualizing and exporting motion capture.
 
