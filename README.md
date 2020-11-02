@@ -2,7 +2,7 @@
 
 [Rokoko Studio](https://www.rokoko.com/en/products/studio) is a powerful and intuitive software for recording, visualizing and exporting motion capture.
 
-This plugin let's you stream animation data from Rokoko Studio into Unreal Engine to preview and work with all your motion capture data easily and intuitively.
+This plugin let's you stream animation data from Rokoko Studio into Unity to preview and work with all your motion capture data easily and intuitively.
 
 ---
 
