@@ -1,4 +1,5 @@
-﻿using Rokoko.Helper;
+﻿using Rokoko.Core;
+using Rokoko.Helper;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
