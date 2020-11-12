@@ -55,6 +55,13 @@ namespace Rokoko.Inputs
 
         protected virtual void Awake()
         {
+            if (!animator.isHuman)
+            {
+                if (debug)
+                    Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.");
+                return;
+            }
+
             InitializeBodyBones();
 
             // Get the Hip height independent of parent transformations
@@ -67,6 +74,8 @@ namespace Rokoko.Inputs
         /// </summary>
         private void Start()
         {
+            if (!animator.isHuman) return;
+
             if (!string.IsNullOrEmpty(profileName))
                 StudioManager.AddActorOverride(this);
         }
@@ -76,7 +85,7 @@ namespace Rokoko.Inputs
         /// </summary>
         protected void InitializeBodyBones()
         {
-            if (animator == null) return;
+            if (animator == null || !animator.isHuman) return;
 
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
@@ -97,6 +106,8 @@ namespace Rokoko.Inputs
         /// </summary>
         public virtual void UpdateActor(ActorFrame actorFrame)
         {
+            if (animator == null || !animator.isHuman) return;
+
             profileName = actorFrame.name;
 
             bool updateBody = actorFrame.meta.hasBody || actorFrame.meta.hasGloves;
