@@ -15,6 +15,9 @@ namespace Rokoko.Inputs
         [SerializeField] protected Renderer meshRenderer = null;
         [SerializeField] private Material bodyMaterial = null;
         [SerializeField] private Material faceInvisibleMaterial = null;
+        public bool autoHideFaceWhenInactive = false;
+
+        protected Material[] meshMaterials;
 
         #region Initialize
 
@@ -44,6 +47,14 @@ namespace Rokoko.Inputs
 
         #region Public Methods
 
+        public override void CreateIdle(string actorName)
+        {
+            base.CreateIdle(actorName);
+
+            if (autoHideFaceWhenInactive)
+                face?.gameObject.SetActive(false);
+        }
+
         public override void UpdateActor(ActorFrame actorFrame)
         {
             base.UpdateActor(actorFrame);
@@ -55,6 +66,10 @@ namespace Rokoko.Inputs
 
             // Update material color and visibility
             UpdateMaterialColors(actorFrame);
+
+            // Enable/Disable face renderer
+            if (autoHideFaceWhenInactive)
+                face?.gameObject.SetActive(actorFrame.meta.hasFace);
         }
 
         #endregion

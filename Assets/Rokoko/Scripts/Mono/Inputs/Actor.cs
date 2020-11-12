@@ -37,22 +37,29 @@ namespace Rokoko.Inputs
         [Tooltip("Convert Studio data to Unity rotation space")]
         public RotationSpace rotationSpace = RotationSpace.Offset;
 
-        [HideInInspector] public Face face = null;
-        [HideInInspector] public bool autoHideFaceWhenInactive = false;
+        [Space(10)]
+        [Tooltip("Calculate Model's height comparing to Actor's and position the Hips accordingly.\nGreat tool to align with the floor")]
+        public bool adjustHipHeightBasedOnStudioActor = true;
 
-        private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
+        [HideInInspector] public Face face = null;
 
         [Header("Log extra info")]
         public bool debug = false;
 
         protected Dictionary<HumanBodyBones, Transform> animatorHumanBones = new Dictionary<HumanBodyBones, Transform>();
-        protected Material[] meshMaterials;
+        private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
+
+        private float hipHeight = 0;
 
         #region Initialize
 
         protected virtual void Awake()
         {
             InitializeBodyBones();
+
+            // Get the Hip height independent of parent transformations
+            hipHeight = animatorHumanBones[HumanBodyBones.Hips].parent.InverseTransformVector(animatorHumanBones[HumanBodyBones.Hips].localPosition).y;
+            hipHeight = Mathf.Abs(hipHeight);
         }
 
         /// <summary>
@@ -96,11 +103,7 @@ namespace Rokoko.Inputs
 
             // Update skeleton from data
             if (updateBody)
-                UpdateSkeleton(actorFrame.body);
-
-            // Enable/Disable face renderer
-            if (autoHideFaceWhenInactive)
-                face?.gameObject.SetActive(actorFrame.meta.hasFace);
+                UpdateSkeleton(actorFrame);
 
             // Update face from data
             if (actorFrame.meta.hasFace)
@@ -113,9 +116,6 @@ namespace Rokoko.Inputs
         public virtual void CreateIdle(string actorName)
         {
             this.profileName = actorName;
-
-            if (autoHideFaceWhenInactive)
-                face?.gameObject.SetActive(false);
         }
 
         #endregion
@@ -125,17 +125,23 @@ namespace Rokoko.Inputs
         /// <summary>
         /// Update Humanoid Skeleton based on BodyData.
         /// </summary>
-        protected void UpdateSkeleton(BodyFrame bodyFrame)
+        protected void UpdateSkeleton(ActorFrame actorFrame)
         {
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
                 if (bone == HumanBodyBones.LastBone) break;
-                ActorJointFrame? boneFrame = bodyFrame.GetBoneFrame(bone);
+                ActorJointFrame? boneFrame = actorFrame.body.GetBoneFrame(bone);
                 if (boneFrame != null)
                 {
                     bool shouldUpdatePosition = bone == HumanBodyBones.Hips;
-                    Vector3 worldPosition = boneFrame.Value.position.ToVector3();
+
                     Quaternion worldRotation = boneFrame.Value.rotation.ToQuaternion();
+                    Vector3 worldPosition = boneFrame.Value.position.ToVector3();
+
+                    // Offset Hip bone
+                    if (shouldUpdatePosition && adjustHipHeightBasedOnStudioActor)
+                        worldPosition = new Vector3(worldPosition.x, worldPosition.y - (actorFrame.dimensions.hipHeight - hipHeight), worldPosition.z);
+
                     UpdateBone(bone, worldPosition, worldRotation, shouldUpdatePosition, positionSpace, rotationSpace);
                 }
             }
@@ -147,7 +153,7 @@ namespace Rokoko.Inputs
         protected void UpdateBone(HumanBodyBones bone, Vector3 worldPosition, Quaternion worldRotation, bool updatePosition, Space positionSpace, RotationSpace rotationSpace)
         {
             // Find Humanoid bone
-            Transform boneTransform = null;
+            Transform boneTransform;
             if (boneMapping == BoneMappingEnum.Animator)
                 boneTransform = animatorHumanBones[bone];
             else
@@ -164,14 +170,13 @@ namespace Rokoko.Inputs
             // Update position
             if (updatePosition)
             {
-                if (positionSpace == Space.World)
+                if (positionSpace == Space.World || transform.parent == null)
+                {
                     boneTransform.position = worldPosition;
+                }
                 else
                 {
-                    if (transform.parent != null)
-                        boneTransform.localPosition = worldPosition;
-                    else
-                        boneTransform.position = worldPosition;
+                    boneTransform.localPosition = boneTransform.parent.InverseTransformVector(worldPosition);
                 }
             }
 

@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Rokoko.Helper
 {
-
     public static class RokokoHelper
     {
         public static Vector3 ToVector3(this Vector3Frame vec3)
@@ -254,6 +253,33 @@ namespace Rokoko.Helper
             values[(int)BlendShapes.tongueOut] = faceFrame.tongueOut;
 
             return values;
+        }
+
+        public static Dictionary<string, int> GetAllBlendshapes(this Mesh mesh)
+        {
+            Dictionary<string, int> blendshapeNamesToIndex = new Dictionary<string, int>();
+            for (int i = 0; i < mesh.blendShapeCount; i++)
+            {
+                blendshapeNamesToIndex.Add(mesh.GetBlendShapeName(i).ToLower(), i);
+            }
+            return blendshapeNamesToIndex;
+        }
+
+        /// <summary>
+        /// Get all missing blendshapes comparing to ARKit 52 blendshapes
+        /// </summary>
+        public static List<string> GetAllMissingBlendshapes(this Mesh mesh)
+        {
+            List<string> missingBlendshapes = new List<string>();
+            List<string> blendshapeNames = new List<string>(mesh.GetAllBlendshapes().Keys);
+            for (int i = 0; i < BlendshapesArray.Length; i++)
+            {
+                string arkitName = BlendshapesArray[i].ToString();
+                if (!blendshapeNames.Contains(arkitName.ToLower()))
+                    missingBlendshapes.Add(arkitName);
+            }
+
+            return missingBlendshapes;
         }
 
         private static BlendShapes[] _BlendshapesArray = null;
