@@ -57,8 +57,7 @@ namespace Rokoko.Inputs
         {
             if (!animator.isHuman)
             {
-                if (debug)
-                    Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.");
+                Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.");
                 return;
             }
 
