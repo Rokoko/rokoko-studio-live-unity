@@ -14,7 +14,6 @@ namespace Rokoko.UnityEditor
         SerializedProperty animatorProperty;
         SerializedProperty profileNameProperty;
         SerializedProperty faceProperty;
-        SerializedProperty autoHideFaceWhenInactiveProperty;
 
         protected void OnEnable()
         {
@@ -22,7 +21,9 @@ namespace Rokoko.UnityEditor
             animatorProperty = serializedObject.FindProperty("animator");
             profileNameProperty = serializedObject.FindProperty("profileName");
             faceProperty = serializedObject.FindProperty("face");
-            autoHideFaceWhenInactiveProperty = serializedObject.FindProperty("autoHideFaceWhenInactive");
+
+            Actor actor = (Actor)target;
+            actor.animator = actor.gameObject.GetComponent<Animator>();
         }
 
         // Stops showing the script field
@@ -61,17 +62,16 @@ namespace Rokoko.UnityEditor
                 }
                 else if (!actor.animator.isHuman)
                 {
-                    EditorGUILayout.HelpBox("The avatar you are using is not humanoid.", MessageType.Warning);
+                    EditorGUILayout.HelpBox("The avatar you are using is not humanoid.\nPlease go in model inspector, under Rig tab and select AnimationType as Humanoid.", MessageType.Error);
                 }
             }
             else
             {
                 if (actor.GetComponent<HumanBoneMapping>() == null)
                 {
-                    Undo.RecordObject(actor.gameObject, "Undo Actor Changes");
                     actor.customBoneMapping = Undo.AddComponent(actor.gameObject, typeof(HumanBoneMapping)) as HumanBoneMapping;
                 }
-                else if(actor.customBoneMapping == null)
+                else if (actor.customBoneMapping == null)
                 {
                     actor.customBoneMapping = actor.GetComponent<HumanBoneMapping>();
                 }
@@ -82,13 +82,23 @@ namespace Rokoko.UnityEditor
             EditorGUILayout.LabelField("Actor Face (Optional)", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(faceProperty);
+            if (GUILayout.Button("Create"))
+            {
+                if (actor.gameObject.GetComponent<Face>() is Face face)
+                {
+                    actor.face = face;
+                }
+                else
+                {
+                    actor.face = Undo.AddComponent(actor.gameObject, typeof(Face)) as Face;
+                }
+                
+            }
             if (GUILayout.Button("Self"))
             {
                 actor.face = actor.GetComponentInChildren<Face>();
             }
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.PropertyField(autoHideFaceWhenInactiveProperty);
-
 
             serializedObject.ApplyModifiedProperties();
 
