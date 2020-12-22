@@ -182,11 +182,11 @@ namespace Rokoko.Inputs
             {
                 if (positionSpace == Space.World || transform.parent == null)
                 {
-                    boneTransform.position = worldPosition;
+                    boneTransform.localPosition = worldPosition;
                 }
                 else
                 {
-                    boneTransform.localPosition = boneTransform.parent.InverseTransformVector(worldPosition);
+                    boneTransform.localPosition = worldPosition;
                 }
             }
 
@@ -222,7 +222,7 @@ namespace Rokoko.Inputs
                 if (humanoidBones[bone] != null)
                 {
                     // Subtract Root orientation from bone
-                    Quaternion boneTransform = Quaternion.Inverse(humanoidBones[HumanBodyBones.Hips].rotation) * humanoidBones[bone].rotation;
+                    Quaternion boneTransform = Quaternion.Inverse(humanoidBones[HumanBodyBones.Hips].parent.rotation) * humanoidBones[bone].rotation;
                     // Subtract from SmartSuit T Pose
                     rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * boneTransform;
                 }
