@@ -47,12 +47,14 @@ namespace Rokoko.UnityEditor
         public override void OnInspectorGUI()
         {
             BlendShapesMapping blendshapesMapping = (BlendShapesMapping)target;
+            serializedObject.Update();
+
             Undo.RecordObject(blendshapesMapping, "Undo ActorCustomBoneMapping Changes");
 
             // Initialize Array
             if (blendshapesMapping.blendshapeNames.Count != BlendshapesArray.Length)
             {
-                blendshapesMapping.blendshapeNames = new Dictionary<BlendShapes, string>(BlendshapesArray.Length);
+                blendshapesMapping.blendshapeNames = new BlendshapesDictionary();
                 for (int i = 0; i < BlendshapesArray.Length; i++)
                 {
                     blendshapesMapping.blendshapeNames.Add(BlendshapesArray[i], "");
@@ -66,21 +68,23 @@ namespace Rokoko.UnityEditor
 
             if (GUILayout.Button("Copy from ARKit"))
             {
-                // Copy fiels from ARKit
-                foreach (KeyValuePair<BlendShapes, string> pair in new Dictionary<BlendShapes, string>(blendshapesMapping.blendshapeNames))
+                // Copy fields from ARKit
+                for (int i = 0; i < blendshapesMapping.blendshapeNames.Count; i++)
                 {
-                    blendshapesMapping.blendshapeNames[pair.Key] = pair.Key.ToString();
+                    KeyValuePair<BlendShapes, string> keyPair = blendshapesMapping.blendshapeNames[i];
+                    blendshapesMapping.blendshapeNames[keyPair.Key] = keyPair.Key.ToString();
                 }
             }
 
             GUILayout.Space(10);
 
             // Draw a field for each Blendshape
-            foreach(KeyValuePair<BlendShapes, string> pair in new Dictionary<BlendShapes, string>(blendshapesMapping.blendshapeNames))
+            for (int i = 0; i < blendshapesMapping.blendshapeNames.Count; i++)
             {
+                KeyValuePair<BlendShapes, string> keyPair = blendshapesMapping.blendshapeNames[i];
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(pair.Key.ToString().ToUpperFirstChar());
-                blendshapesMapping.blendshapeNames[pair.Key] = EditorGUILayout.TextField(pair.Value.ToString());
+                EditorGUILayout.LabelField(keyPair.Key.ToString().ToUpperFirstChar());
+                blendshapesMapping.blendshapeNames[keyPair.Key] = EditorGUILayout.TextField(keyPair.Value.ToString());
                 EditorGUILayout.EndHorizontal();
             }
 
@@ -88,7 +92,6 @@ namespace Rokoko.UnityEditor
 
             // Draw standard fields
             //base.OnInspectorGUI();
-
         }
     }
 }
