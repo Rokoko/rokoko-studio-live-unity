@@ -1309,6 +1309,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 637641700}
     m_Modifications:
+    - target: {fileID: 2593190916907241149, guid: fe3b0c434bb22024aaddb5f7564faa14,
+        type: 3}
+      propertyPath: blendshapeMapping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593190916907241149, guid: fe3b0c434bb22024aaddb5f7564faa14,
+        type: 3}
+      propertyPath: blendshapeCustomMap
+      value: 
+      objectReference: {fileID: 260221730220688861}
     - target: {fileID: 4791309571641307522, guid: fe3b0c434bb22024aaddb5f7564faa14,
         type: 3}
       propertyPath: m_Name
@@ -1371,6 +1381,79 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe3b0c434bb22024aaddb5f7564faa14, type: 3}
+--- !u!1 &260221730220688860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4791309573049081569, guid: fe3b0c434bb22024aaddb5f7564faa14,
+    type: 3}
+  m_PrefabInstance: {fileID: 260221730220688859}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &260221730220688861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260221730220688860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a3f22e5c105474e9725d5438558a99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blendshapeNames:
+    keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f00000030000000310000003200000033000000
+    values:
+    - eyeBlinkLeft
+    - eyeLookDownLeft
+    - eyeLookInLeft
+    - eyeLookOutLeft
+    - eyeLookUpLeft
+    - eyeSquintLeft
+    - eyeWideLeft
+    - eyeBlinkRight
+    - eyeLookDownRight
+    - eyeLookInRight
+    - eyeLookOutRight
+    - eyeLookUpRight
+    - eyeSquintRight
+    - eyeWideRight
+    - jawForward
+    - jawLeft
+    - jawRight
+    - jawOpen
+    - mouthClose
+    - mouthFunnel
+    - mouthPucker
+    - mouthLeft
+    - mouthRight
+    - mouthSmileLeft
+    - mouthSmileRight
+    - mouthFrownLeft
+    - mouthFrownRight
+    - mouthDimpleLeft
+    - mouthDimpleRight
+    - mouthStretchLeft
+    - mouthStretchRight
+    - mouthRollLower
+    - mouthRollUpper
+    - mouthShrugLower
+    - mouthShrugUpper
+    - mouthPressLeft
+    - mouthPressRight
+    - mouthLowerDownLeft
+    - mouthLowerDownRight
+    - mouthUpperUpLeft
+    - mouthUpperUpRight
+    - browDownLeft
+    - browDownRight
+    - browInnerUp
+    - browOuterUpLeft
+    - browOuterUpRight
+    - cheekPuff
+    - cheekSquintLeft
+    - cheekSquintRight
+    - noseSneerLeft
+    - noseSneerRight
+    - tongueOut
 --- !u!1001 &4461173009085248631
 PrefabInstance:
   m_ObjectHideFlags: 0

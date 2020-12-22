@@ -6,5 +6,5 @@ using UnityEngine;
 
 public class BlendShapesMapping : MonoBehaviour
 {
-    public Dictionary<BlendShapes, string> blendshapeNames = new Dictionary<BlendShapes, string>();
+    public BlendshapesDictionary blendshapeNames = new BlendshapesDictionary();
 }
