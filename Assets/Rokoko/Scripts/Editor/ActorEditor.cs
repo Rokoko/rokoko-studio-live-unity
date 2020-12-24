@@ -115,8 +115,6 @@ namespace Rokoko.RokokoEditor
                             // Make contour guide bigger
                             tposeComponent.transform.localScale = Vector3.one * actorHeight * 0.1f * 1.25f;
                             tposeComponent.followOffset = new Vector3(0, actorHeight / 2f, -0.5f);
-
-                            Debug.Log(actorHeight);
                         }
                     }
                     else
