@@ -29,10 +29,13 @@ namespace Rokoko.RokokoEditor
             faceProperty = serializedObject.FindProperty("face");
 
             Actor actor = (Actor)target;
-            actor.animator = actor.gameObject.GetComponent<Animator>();
 
-            if (!actor.isValidTpose)
+            if (!Application.isPlaying)
+                actor.animator = actor.gameObject.GetComponent<Animator>();
+
+            if (actor.animator != null && !actor.isValidTpose)
                 actor.CalculateTPose();
+
             EditorApplication.playModeStateChanged += EditorApplication_playModeStateChanged;
         }
 
@@ -132,7 +135,7 @@ namespace Rokoko.RokokoEditor
 
                     EditorGUILayout.EndHorizontal();
 
-                    if(tPoseGuide != null)
+                    if (tPoseGuide != null)
                     {
                         EditorGUILayout.HelpBox("Rotate your character according to the help guide plane.\nNote: Position doesn't matter, you only need to match the actor to the silhouette", MessageType.Info);
                     }

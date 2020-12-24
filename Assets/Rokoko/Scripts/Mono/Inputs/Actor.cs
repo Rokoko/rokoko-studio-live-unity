@@ -61,9 +61,15 @@ namespace Rokoko.Inputs
 
         protected virtual void Awake()
         {
+            if(animator == null)
+            {
+                Debug.LogError($"Actor {this.name} isn't configured", this.transform);
+                return;
+            }
+
             if (!animator.isHuman)
             {
-                Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.");
+                Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.", this.transform);
                 return;
             }
 
@@ -83,7 +89,7 @@ namespace Rokoko.Inputs
         /// </summary>
         private void Start()
         {
-            if (!animator.isHuman) return;
+            if (animator != null && !animator.isHuman) return;
 
             if (!string.IsNullOrEmpty(profileName))
                 StudioManager.AddActorOverride(this);
@@ -207,7 +213,7 @@ namespace Rokoko.Inputs
 
             if(rightHand == null || leftHand == null || spine == null || chest == null)
             {
-                Debug.LogError("Cant validate actor height. Bone is missing");
+                Debug.LogError("Cant validate actor height. Bone is missing", this.transform);
                 return false;
             }
 
