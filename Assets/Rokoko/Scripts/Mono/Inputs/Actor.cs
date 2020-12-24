@@ -53,8 +53,6 @@ namespace Rokoko.Inputs
 
         private float hipHeight = 0;
 
-        private Quaternion heading;
-
         #region Initialize
 
         protected virtual void Awake()
@@ -72,8 +70,6 @@ namespace Rokoko.Inputs
             // Get the Hip height independent of parent transformations
             hipHeight = GetBone(HumanBodyBones.Hips).parent.InverseTransformVector(GetBone(HumanBodyBones.Hips).localPosition).y;
             hipHeight = Mathf.Abs(hipHeight);
-
-            heading = GetBone(HumanBodyBones.Hips).parent.rotation;
         }
 
         [ContextMenu("CalcualteTPose")]
@@ -120,6 +116,7 @@ namespace Rokoko.Inputs
         protected void InitializeAnimatorHumanBones()
         {
             if (animator == null || !animator.isHuman) return;
+            animatorHumanBones.Clear();
 
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
@@ -229,11 +226,12 @@ namespace Rokoko.Inputs
                 {
                     boneTransform.position = Quaternion.LookRotation(boneTransform.parent.forward) * worldPosition;
                     //boneTransform.position = Quaternion.Inverse(boneTransform.parent.rotation) * worldPosition;
-                    boneTransform.localPosition = boneTransform.parent.rotation * worldPosition;
                     //boneTransform.localPosition = worldPosition;
-                    
-                    boneTransform.position = heading * worldPosition;
 
+                    // Correct Solution
+                    boneTransform.position = boneTransform.parent.rotation * worldPosition + boneTransform.parent.position;
+
+                    //boneTransform.position = worldPosition + boneTransform.parent.position;
                 }
             }
 
@@ -251,7 +249,7 @@ namespace Rokoko.Inputs
             }
             else
             {
-                boneTransform.rotation = this.transform.rotation * worldRotation * offsets[bone];
+                boneTransform.rotation = GetBone(HumanBodyBones.Hips).parent.rotation *  worldRotation * offsets[bone];
             }
         }
 
