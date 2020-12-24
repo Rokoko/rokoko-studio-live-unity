@@ -1,6 +1,5 @@
 ﻿using Rokoko.Core;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -322,6 +321,11 @@ namespace Rokoko.Helper
                 GameObject.Destroy(gameObject);
             else
                 GameObject.DestroyImmediate(gameObject);
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+#endif
         }
     }
 }

@@ -178,6 +178,19 @@ namespace Rokoko.Inputs
             this.profileName = actorName;
         }
 
+        public float GetActorHeight()
+        {
+            InitializeBonesIfNeeded();
+
+            Transform head = GetBone(HumanBodyBones.Head);
+            Transform foot = GetBone(HumanBodyBones.LeftFoot);
+            if (head == null || foot == null) 
+                return 1.8f;
+
+            // Add space for head mesh
+            return Vector3.Distance(head.position, foot.position) + 0.25f;
+        }
+
         #endregion
 
         #region Internal Logic
@@ -186,10 +199,26 @@ namespace Rokoko.Inputs
         {
             InitializeBonesIfNeeded();
 
-            Vector3 armsDirection = GetBone(HumanBodyBones.RightHand).position - GetBone(HumanBodyBones.LeftHand).position;
+            Transform rightHand = GetBone(HumanBodyBones.RightHand);
+            Transform leftHand = GetBone(HumanBodyBones.LeftHand);
+
+            Transform spine = GetBone(HumanBodyBones.Spine);
+            Transform chest = GetBone(HumanBodyBones.Chest);
+
+            if(rightHand == null || leftHand == null || spine == null || chest == null)
+            {
+                Debug.LogError("Cant validate actor height. Bone is missing");
+                return false;
+            }
+
+            Vector3 armsDirection = rightHand.position - leftHand.position;
             armsDirection.Normalize();
 
-            return Vector3.Dot(armsDirection, Vector3.right) > 0.99f;
+            Vector3 spineDirection = chest.position - spine.position;
+            spineDirection.Normalize();
+
+            return Vector3.Dot(armsDirection, Vector3.right) > 0.99f &&
+                   Vector3.Dot(spineDirection, Vector3.up) > 0.99f;
         }
 
         /// <summary>
@@ -281,28 +310,6 @@ namespace Rokoko.Inputs
         }
 
         #endregion
-
-        private void OnDrawGizmos()
-        {
-            return;
-            InitializeBonesIfNeeded();
-
-            Gizmos.color = Color.yellow;
-            foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
-            {
-                if (bone == HumanBodyBones.LastBone) break;
-                if (bone == HumanBodyBones.Hips) continue;
-
-                Transform boneTransform = GetBone(bone);
-
-                if (boneTransform == null) continue;
-
-                Transform parentBoneTransform = boneTransform.parent;
-
-                //Gizmos.DrawLine(boneTransform.position, parentBoneTransform.position);
-                Gizmos.DrawSphere(boneTransform.position, 0.05f);
-            }
-        }
 
         /// <summary>
         /// Get the rotational difference between 2 humanoid T poses.

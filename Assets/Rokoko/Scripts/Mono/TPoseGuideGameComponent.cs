@@ -7,7 +7,7 @@ namespace Rokoko
     [ExecuteInEditMode]
     public class TPoseGuideGameComponent : MonoBehaviour
     {
-        public GameObject followTarget;
+        public Transform followTarget;
         public Vector3 followOffset = Vector3.zero;
 
         private void Awake()
@@ -19,11 +19,18 @@ namespace Rokoko
 #endif
         }
 
+        private void Start()
+        {
+            
+        }
+
         private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
         {
 #if UNITY_EDITOR
-            RokokoHelper.Destroy(this.gameObject);
-            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
+            if (!Application.isPlaying)
+            {
+                RokokoHelper.Destroy(this.gameObject);
+            }
 #endif
         }
 
