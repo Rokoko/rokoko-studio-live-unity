@@ -1,12 +1,13 @@
-﻿using Rokoko.Inputs;
-using System.Collections;
+﻿#if UNITY_EDITOR
+
+using Rokoko.Inputs;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Rokoko.Helper;
 using Rokoko.Core;
 
-namespace Rokoko.UnityEditor
+namespace Rokoko.RokokoEditor
 {
     [CustomEditor(typeof(BlendShapesMapping))]
     [CanEditMultipleObjects]
@@ -95,3 +96,5 @@ namespace Rokoko.UnityEditor
         }
     }
 }
+
+#endif

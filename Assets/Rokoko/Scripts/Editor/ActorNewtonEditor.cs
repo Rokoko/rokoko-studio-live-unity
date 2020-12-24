@@ -1,12 +1,13 @@
-﻿using Rokoko.Inputs;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿#if UNITY_EDITOR
 
-namespace Rokoko.UnityEditor
+using Rokoko.Inputs;
+using UnityEditor;
+
+namespace Rokoko.RokokoEditor
 {
     [CustomEditor(typeof(ActorNewton))]
     [CanEditMultipleObjects]
     public class ActorNewtonEditor : ActorEditor { }
 }
+
+#endif

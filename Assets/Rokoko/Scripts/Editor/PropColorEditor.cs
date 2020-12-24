@@ -1,10 +1,12 @@
-﻿using Rokoko.Inputs;
+﻿#if UNITY_EDITOR
+
+using Rokoko.Inputs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Rokoko.UnityEditor
+namespace Rokoko.RokokoEditor
 {
     [CustomEditor(typeof(PropColor))]
     [CanEditMultipleObjects]
@@ -38,3 +40,5 @@ namespace Rokoko.UnityEditor
         }
     }
 }
+
+#endif

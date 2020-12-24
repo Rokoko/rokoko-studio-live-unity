@@ -46,6 +46,12 @@ namespace Rokoko.Inputs
         [Header("Log extra info")]
         public bool debug = false;
 
+        [HideInInspector]
+        public HumanTPoseDictionary characterTPose = new HumanTPoseDictionary();
+
+        [HideInInspector]
+        public bool isValidTpose = false;
+
         protected Dictionary<HumanBodyBones, Transform> animatorHumanBones = new Dictionary<HumanBodyBones, Transform>();
         private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
 
@@ -55,17 +61,27 @@ namespace Rokoko.Inputs
 
         protected virtual void Awake()
         {
-            if (!animator.isHuman)
+            if(animator == null)
             {
-                Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.");
+                Debug.LogError($"Actor {this.name} isn't configured", this.transform);
                 return;
             }
 
-            InitializeBodyBones();
+            if (!animator.isHuman)
+            {
+                Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.", this.transform);
+                return;
+            }
+
+            InitializeAnimatorHumanBones();
+            InitializeBoneOffsets();
 
             // Get the Hip height independent of parent transformations
-            hipHeight = animatorHumanBones[HumanBodyBones.Hips].parent.InverseTransformVector(animatorHumanBones[HumanBodyBones.Hips].localPosition).y;
+            hipHeight = GetBone(HumanBodyBones.Hips).parent.InverseTransformVector(GetBone(HumanBodyBones.Hips).localPosition).y;
             hipHeight = Mathf.Abs(hipHeight);
+
+            if (characterTPose.Count == 0)
+                Debug.LogError($"Character {this.name} is not set to TPose. Please ensure you assign a valid TPose in Editor before playing", this.transform);
         }
 
         /// <summary>
@@ -73,27 +89,67 @@ namespace Rokoko.Inputs
         /// </summary>
         private void Start()
         {
-            if (!animator.isHuman) return;
+            if (animator != null && !animator.isHuman) return;
 
             if (!string.IsNullOrEmpty(profileName))
                 StudioManager.AddActorOverride(this);
         }
 
+        [ContextMenu("CalcualteTPose")]
+        public void CalculateTPose()
+        {
+            InitializeAnimatorHumanBones();
+            InitializeCharacterTPose();
+
+            isValidTpose = IsValidTPose();
+        }
+
+        private void InitializeBonesIfNeeded()
+        {
+            if (boneMapping == BoneMappingEnum.Animator && animatorHumanBones.Count == 0)
+                InitializeAnimatorHumanBones();
+        }
+
+        /// <summary>
+        /// Store Character's T Pose.
+        /// </summary>
+        protected void InitializeCharacterTPose()
+        {
+            characterTPose.Clear();
+            foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
+            {
+                if (bone == HumanBodyBones.LastBone) break;
+                Transform boneTransform = GetBone(bone);
+
+                if (boneTransform == null) continue;
+
+                characterTPose.Add(bone, boneTransform.rotation);
+            }
+        }
+
+        /// <summary>
+        /// Calculate Character's offset based on its T Pose and Newton's T Pose.
+        /// </summary>
+        protected void InitializeBoneOffsets()
+        {
+            // Calculate offsets based on Smartsuit T pose
+            offsets = CalculateRotationOffsets();
+        }
+
         /// <summary>
         /// Cache the bone transforms from Animator.
         /// </summary>
-        protected void InitializeBodyBones()
+        protected void InitializeAnimatorHumanBones()
         {
+            if (boneMapping != BoneMappingEnum.Animator) return;
             if (animator == null || !animator.isHuman) return;
+            animatorHumanBones.Clear();
 
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
                 if (bone == HumanBodyBones.LastBone) break;
                 animatorHumanBones.Add(bone, animator.GetBoneTransform(bone));
             }
-
-            // Calculate offsets based on Smartsuit T pose
-            offsets = GetRotationOffsets(animatorHumanBones);
         }
 
         #endregion
@@ -128,9 +184,64 @@ namespace Rokoko.Inputs
             this.profileName = actorName;
         }
 
+        public float GetActorHeight()
+        {
+            InitializeBonesIfNeeded();
+
+            Transform head = GetBone(HumanBodyBones.Head);
+            Transform foot = GetBone(HumanBodyBones.LeftFoot);
+            if (head == null || foot == null) 
+                return 1.8f;
+
+            // Add space for head mesh
+            return Vector3.Distance(head.position, foot.position) + 0.25f;
+        }
+
         #endregion
 
         #region Internal Logic
+
+        private bool IsValidTPose()
+        {
+            InitializeBonesIfNeeded();
+
+            Transform rightHand = GetBone(HumanBodyBones.RightHand);
+            Transform leftHand = GetBone(HumanBodyBones.LeftHand);
+
+            Transform spine = GetBone(HumanBodyBones.Spine);
+            Transform chest = GetBone(HumanBodyBones.Chest);
+
+            if(rightHand == null || leftHand == null || spine == null || chest == null)
+            {
+                Debug.LogError("Cant validate actor height. Bone is missing", this.transform);
+                return false;
+            }
+
+            Vector3 armsDirection = rightHand.position - leftHand.position;
+            armsDirection.Normalize();
+
+            Vector3 spineDirection = chest.position - spine.position;
+            spineDirection.Normalize();
+
+            return Vector3.Dot(armsDirection, Vector3.right) > 0.99f &&
+                   Vector3.Dot(spineDirection, Vector3.up) > 0.99f;
+        }
+
+        /// <summary>
+        /// Get Transform from a given HumanBodyBones.
+        /// </summary>
+        private Transform GetBone(HumanBodyBones bone)
+        {
+            switch (boneMapping)
+            {
+                case BoneMappingEnum.Animator:
+                    return animatorHumanBones[bone];
+                case BoneMappingEnum.Custom:
+                    return customBoneMapping.customBodyBones[(int)bone];
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Update Humanoid Skeleton based on BodyData.
@@ -163,11 +274,7 @@ namespace Rokoko.Inputs
         protected void UpdateBone(HumanBodyBones bone, Vector3 worldPosition, Quaternion worldRotation, bool updatePosition, Space positionSpace, RotationSpace rotationSpace)
         {
             // Find Humanoid bone
-            Transform boneTransform;
-            if (boneMapping == BoneMappingEnum.Animator)
-                boneTransform = animatorHumanBones[bone];
-            else
-                boneTransform = customBoneMapping.customBodyBones[(int)bone];
+            Transform boneTransform = GetBone(bone);
 
             // Check if bone is valid
             if (boneTransform == null)
@@ -180,13 +287,13 @@ namespace Rokoko.Inputs
             // Update position
             if (updatePosition)
             {
-                if (positionSpace == Space.World || transform.parent == null)
+                if (positionSpace == Space.World || boneTransform.parent == null)
                 {
-                    boneTransform.localPosition = worldPosition;
+                    boneTransform.position = worldPosition;
                 }
                 else
                 {
-                    boneTransform.localPosition = worldPosition;
+                    boneTransform.position = boneTransform.parent.rotation * worldPosition + boneTransform.parent.position;
                 }
             }
 
@@ -204,7 +311,7 @@ namespace Rokoko.Inputs
             }
             else
             {
-                boneTransform.rotation = this.transform.rotation * worldRotation * offsets[bone];
+                boneTransform.rotation = GetBone(HumanBodyBones.Hips).parent.rotation *  worldRotation * offsets[bone];
             }
         }
 
@@ -213,19 +320,13 @@ namespace Rokoko.Inputs
         /// <summary>
         /// Get the rotational difference between 2 humanoid T poses.
         /// </summary>
-        private static Dictionary<HumanBodyBones, Quaternion> GetRotationOffsets(Dictionary<HumanBodyBones, Transform> humanoidBones)
+        private Dictionary<HumanBodyBones, Quaternion> CalculateRotationOffsets()
         {
             Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
-                Quaternion rotation = Quaternion.identity;
-                if (humanoidBones[bone] != null)
-                {
-                    // Subtract Root orientation from bone
-                    Quaternion boneTransform = Quaternion.Inverse(humanoidBones[HumanBodyBones.Hips].parent.rotation) * humanoidBones[bone].rotation;
-                    // Subtract from SmartSuit T Pose
-                    rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * boneTransform;
-                }
+                if (!characterTPose.Contains(bone)) continue;
+                Quaternion rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * characterTPose[bone];
 
                 offsets.Add(bone, rotation);
             }

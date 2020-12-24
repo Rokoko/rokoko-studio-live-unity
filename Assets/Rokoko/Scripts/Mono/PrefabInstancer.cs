@@ -2,42 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabInstancer<T, P> where P : MonoBehaviour
+namespace Rokoko
 {
-    private PrefabPool<P> pool;
-    private Dictionary<T, P> objects;
-
-    public PrefabInstancer(P prefab, Transform container, int poolNumber = 0)
+    public class PrefabInstancer<T, P> where P : MonoBehaviour
     {
-        pool = new PrefabPool<P>(prefab, container, poolNumber);
-        objects = new Dictionary<T, P>();
-    }
+        private PrefabPool<P> pool;
+        private Dictionary<T, P> objects;
 
-    public P this[T key]
-    {
-        get
+        public PrefabInstancer(P prefab, Transform container, int poolNumber = 0)
         {
-            if (!objects.ContainsKey(key))
-                objects.Add(key, pool.Dequeue());
-            return objects[key];
+            pool = new PrefabPool<P>(prefab, container, poolNumber);
+            objects = new Dictionary<T, P>();
         }
-    }
 
-    public bool ContainsKey(T key) => objects.ContainsKey(key);
+        public P this[T key]
+        {
+            get
+            {
+                if (!objects.ContainsKey(key))
+                    objects.Add(key, pool.Dequeue());
+                return objects[key];
+            }
+        }
 
-    public bool ContainsValue(P item) => objects.ContainsValue(item);
+        public bool ContainsKey(T key) => objects.ContainsKey(key);
 
-    public IEnumerable Keys => objects.Keys;
+        public bool ContainsValue(P item) => objects.ContainsValue(item);
 
-    public IEnumerable Values => objects.Values;
+        public IEnumerable Keys => objects.Keys;
 
-    public int Count => objects.Count;
+        public IEnumerable Values => objects.Values;
 
-    public void Remove(T key)
-    {
-        if (!ContainsKey(key)) return;
-        P item = objects[key];
-        objects.Remove(key);
-        pool.Enqueue(item);
+        public int Count => objects.Count;
+
+        public void Remove(T key)
+        {
+            if (!ContainsKey(key)) return;
+            P item = objects[key];
+            objects.Remove(key);
+            pool.Enqueue(item);
+        }
     }
 }

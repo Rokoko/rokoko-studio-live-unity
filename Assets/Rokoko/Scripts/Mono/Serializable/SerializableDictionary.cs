@@ -6,12 +6,12 @@ using System.Collections.Generic;
 /// Create a simple serialized version of a Dictionary in order to able to persist in Editor play mode.
 /// </summary>
 [System.Serializable]
-public class BlendshapesDictionary
+public abstract class SerializableDictionary<TKey, TValue>
 {
-    public List<BlendShapes> keys = new List<BlendShapes>();
-    public List<string> values = new List<string>();
+    public List<TKey> keys = new List<TKey>();
+    public List<TValue> values = new List<TValue>();
 
-    public void Add(BlendShapes key, string value)
+    public void Add(TKey key, TValue value)
     {
         if (keys.Contains(key))
             throw new System.Exception("Key already exists");
@@ -19,7 +19,7 @@ public class BlendshapesDictionary
         values.Add(value);
     }
 
-    public string this[BlendShapes key]
+    public TValue this[TKey key]
     {
         get
         {
@@ -38,14 +38,25 @@ public class BlendshapesDictionary
 
     }
 
-    public KeyValuePair<BlendShapes, string> this[int index]
+    public KeyValuePair<TKey, TValue> this[int index]
     {
         get
         {
             if (keys.Count < index)
                 throw new System.IndexOutOfRangeException();
-            return new KeyValuePair<BlendShapes, string>(keys[index], values[index]);
+            return new KeyValuePair<TKey, TValue>(keys[index], values[index]);
         }
+    }
+
+    public bool Contains(TKey key)
+    {
+        return keys.Contains(key);
+    }
+    
+    public  void Clear()
+    {
+        keys.Clear();
+        values.Clear();
     }
 
     public int Count => keys.Count;

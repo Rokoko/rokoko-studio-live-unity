@@ -49,6 +49,7 @@ CommandAPI script is responsible for communicating remote commands to Rokoko Stu
 You can import any custom character in Unity and use it as an Actor. Simply add your character into your scene and add __*Actor*__ component on it.
 
 __Important Notice: Any custom character/actor must be in a T Pose, so we can retarget it properly from Smartsuit.__
+* __TPose Reference__ - It is neccessary to create a TPose reference for the actor for being able to retarget him from Studio. Actor must be in TPose and be aligned with X axis. Please use __*Show TPose Guide*__ to visualize the plane of which the actor must be aligned. Please not that the position of the actor in regard to guide doesn't matter. Only the rotation should match.
 * __Profile Name__ - Update this field with the profile name of Rokoko Studio to override this actor with your custom one.
 * __Bone Mapping__
 * * __Animator__ - If your character is in the stardard Humanoid format you have to mark it as __*Humanoid*__ in the __*Animation Type*__ under the __*Rig*__ tab in Unity's inspector.

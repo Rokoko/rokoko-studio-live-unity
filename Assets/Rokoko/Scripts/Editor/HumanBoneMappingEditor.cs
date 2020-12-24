@@ -1,10 +1,10 @@
-﻿using Rokoko.Inputs;
-using System.Collections;
-using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+
+using Rokoko.Inputs;
 using UnityEditor;
 using UnityEngine;
 
-namespace Rokoko.UnityEditor
+namespace Rokoko.RokokoEditor
 {
     [CustomEditor(typeof(HumanBoneMapping))]
     [CanEditMultipleObjects]
@@ -84,3 +84,5 @@ namespace Rokoko.UnityEditor
         }
     }
 }
+
+#endif

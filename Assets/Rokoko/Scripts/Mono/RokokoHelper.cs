@@ -1,6 +1,5 @@
 ﻿using Rokoko.Core;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -314,6 +313,19 @@ namespace Rokoko.Helper
                 }
                 return _HumanBodyBonesArray;
             }
+        }
+
+        public static void Destroy(GameObject gameObject)
+        {
+            if (Application.isPlaying)
+                GameObject.Destroy(gameObject);
+            else
+                GameObject.DestroyImmediate(gameObject);
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+#endif
         }
     }
 }

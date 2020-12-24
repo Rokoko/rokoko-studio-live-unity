@@ -12,24 +12,30 @@ namespace Rokoko.Core
 
         protected override void OnDataReceived(byte[] data, IPEndPoint endPoint)
         {
-            base.OnDataReceived(data, endPoint);
-
-            // Decompress LZ4
-            byte[] uncompressed = LZ4Wrapper.Decompress(data);
-            if (uncompressed == null || uncompressed.Length == 0)
+            LiveFrame_v4 liveFrame_V4 = null;
+            try
             {
-                Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
-                return;
-            }
+                base.OnDataReceived(data, endPoint);
 
-            // Convert from Json
-            string text = System.Text.Encoding.UTF8.GetString(uncompressed);
-            LiveFrame_v4 liveFrame_V4 = JsonUtility.FromJson<LiveFrame_v4>(text);
-            if (liveFrame_V4 == null)
-            {
-                Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
-                return;
+                // Decompress LZ4
+                byte[] uncompressed = LZ4Wrapper.Decompress(data);
+                if (uncompressed == null || uncompressed.Length == 0)
+                {
+                    Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
+                    return;
+                }
+
+                // Convert from Json
+                string text = System.Text.Encoding.UTF8.GetString(uncompressed);
+                liveFrame_V4 = JsonUtility.FromJson<LiveFrame_v4>(text);
+
+                if (liveFrame_V4 == null)
+                {
+                    Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
+                    return;
+                }
             }
+            catch { }
 
             onStudioDataReceived?.Invoke(this, liveFrame_V4);
         }
