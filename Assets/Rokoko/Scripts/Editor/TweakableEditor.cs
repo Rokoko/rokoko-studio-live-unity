@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+
+using UnityEditor;
 
 /// <summary>
 /// A simple class to inherit from when only minor tweaks to a component's inspector are required.
@@ -8,29 +10,35 @@
 /// To draw/add extra GUI code/anything else you want before the default inspector is drawn, override OnBeforeDefaultInspector.
 /// Similarly, override OnAfterDefaultInspector to draw GUI elements after the default inspector is drawn.
 /// </summary>
-public abstract class TweakableEditor : Editor
+
+namespace Rokoko.RokokoEditor
 {
-    private static readonly string[] _emptyStringArray = new string[0];
-
-    public override void OnInspectorGUI()
+    public abstract class TweakableEditor : Editor
     {
-        serializedObject.Update();
+        private static readonly string[] _emptyStringArray = new string[0];
 
-        OnBeforeDefaultInspector();
-        DrawPropertiesExcluding(serializedObject, GetInvisibleInDefaultInspector());
-        OnAfterDefaultInspector();
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
 
-        serializedObject.ApplyModifiedProperties();
-    }
+            OnBeforeDefaultInspector();
+            DrawPropertiesExcluding(serializedObject, GetInvisibleInDefaultInspector());
+            OnAfterDefaultInspector();
 
-    protected virtual void OnBeforeDefaultInspector()
-    { }
+            serializedObject.ApplyModifiedProperties();
+        }
 
-    protected virtual void OnAfterDefaultInspector()
-    { }
+        protected virtual void OnBeforeDefaultInspector()
+        { }
 
-    protected virtual string[] GetInvisibleInDefaultInspector()
-    {
-        return _emptyStringArray;
+        protected virtual void OnAfterDefaultInspector()
+        { }
+
+        protected virtual string[] GetInvisibleInDefaultInspector()
+        {
+            return _emptyStringArray;
+        }
     }
 }
+
+#endif

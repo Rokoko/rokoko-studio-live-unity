@@ -52,6 +52,12 @@ public abstract class SerializableDictionary<TKey, TValue>
     {
         return keys.Contains(key);
     }
+    
+    public  void Clear()
+    {
+        keys.Clear();
+        values.Clear();
+    }
 
     public int Count => keys.Count;
 }

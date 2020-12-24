@@ -35,7 +35,7 @@ namespace Rokoko.Core
                     return;
                 }
             }
-            catch (System.Threading.ThreadAbortException) { }
+            catch { }
 
             onStudioDataReceived?.Invoke(this, liveFrame_V4);
         }

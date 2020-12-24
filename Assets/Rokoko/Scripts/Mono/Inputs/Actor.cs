@@ -46,7 +46,11 @@ namespace Rokoko.Inputs
         [Header("Log extra info")]
         public bool debug = false;
 
+        [HideInInspector]
         public HumanTPoseDictionary characterTPose = new HumanTPoseDictionary();
+
+        [HideInInspector]
+        public bool isValidTpose = false;
 
         protected Dictionary<HumanBodyBones, Transform> animatorHumanBones = new Dictionary<HumanBodyBones, Transform>();
         private Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
@@ -64,7 +68,6 @@ namespace Rokoko.Inputs
             }
 
             InitializeAnimatorHumanBones();
-            //InitializeCharacterTPose();
             InitializeBoneOffsets();
 
             // Get the Hip height independent of parent transformations
@@ -87,15 +90,26 @@ namespace Rokoko.Inputs
         }
 
         [ContextMenu("CalcualteTPose")]
-        private void CalculateTPose()
+        public void CalculateTPose()
         {
             InitializeAnimatorHumanBones();
             InitializeCharacterTPose();
-            InitializeBoneOffsets();
+
+            isValidTpose = IsValidTPose();
         }
 
+        private void InitializeBonesIfNeeded()
+        {
+            if (boneMapping == BoneMappingEnum.Animator && animatorHumanBones.Count == 0)
+                InitializeAnimatorHumanBones();
+        }
+
+        /// <summary>
+        /// Store Character's T Pose.
+        /// </summary>
         protected void InitializeCharacterTPose()
         {
+            characterTPose.Clear();
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
                 if (bone == HumanBodyBones.LastBone) break;
@@ -107,6 +121,9 @@ namespace Rokoko.Inputs
             }
         }
 
+        /// <summary>
+        /// Calculate Character's offset based on its T Pose and Newton's T Pose.
+        /// </summary>
         protected void InitializeBoneOffsets()
         {
             // Calculate offsets based on Smartsuit T pose
@@ -118,6 +135,7 @@ namespace Rokoko.Inputs
         /// </summary>
         protected void InitializeAnimatorHumanBones()
         {
+            if (boneMapping != BoneMappingEnum.Animator) return;
             if (animator == null || !animator.isHuman) return;
             animatorHumanBones.Clear();
 
@@ -163,6 +181,16 @@ namespace Rokoko.Inputs
         #endregion
 
         #region Internal Logic
+
+        private bool IsValidTPose()
+        {
+            InitializeBonesIfNeeded();
+
+            Vector3 armsDirection = GetBone(HumanBodyBones.RightHand).position - GetBone(HumanBodyBones.LeftHand).position;
+            armsDirection.Normalize();
+
+            return Vector3.Dot(armsDirection, Vector3.right) > 0.99f;
+        }
 
         /// <summary>
         /// Get Transform from a given HumanBodyBones.
@@ -253,6 +281,28 @@ namespace Rokoko.Inputs
         }
 
         #endregion
+
+        private void OnDrawGizmos()
+        {
+            return;
+            InitializeBonesIfNeeded();
+
+            Gizmos.color = Color.yellow;
+            foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
+            {
+                if (bone == HumanBodyBones.LastBone) break;
+                if (bone == HumanBodyBones.Hips) continue;
+
+                Transform boneTransform = GetBone(bone);
+
+                if (boneTransform == null) continue;
+
+                Transform parentBoneTransform = boneTransform.parent;
+
+                //Gizmos.DrawLine(boneTransform.position, parentBoneTransform.position);
+                Gizmos.DrawSphere(boneTransform.position, 0.05f);
+            }
+        }
 
         /// <summary>
         /// Get the rotational difference between 2 humanoid T poses.

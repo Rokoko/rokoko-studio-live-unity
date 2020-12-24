@@ -315,5 +315,13 @@ namespace Rokoko.Helper
                 return _HumanBodyBonesArray;
             }
         }
+
+        public static void Destroy(GameObject gameObject)
+        {
+            if (Application.isPlaying)
+                GameObject.Destroy(gameObject);
+            else
+                GameObject.DestroyImmediate(gameObject);
+        }
     }
 }

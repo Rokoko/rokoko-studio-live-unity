@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /// <summary>
 /// Create a simple serialized version of a Dictionary in order to able to persist in Editor play mode.

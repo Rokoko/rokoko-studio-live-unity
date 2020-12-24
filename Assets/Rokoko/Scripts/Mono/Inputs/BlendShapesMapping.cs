@@ -4,7 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlendShapesMapping : MonoBehaviour
+namespace Rokoko.Inputs
 {
-    public BlendshapesDictionary blendshapeNames = new BlendshapesDictionary();
+    public class BlendShapesMapping : MonoBehaviour
+    {
+        public BlendshapesDictionary blendshapeNames = new BlendshapesDictionary();
+    }
 }
