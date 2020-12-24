@@ -70,14 +70,9 @@ namespace Rokoko.Inputs
             // Get the Hip height independent of parent transformations
             hipHeight = GetBone(HumanBodyBones.Hips).parent.InverseTransformVector(GetBone(HumanBodyBones.Hips).localPosition).y;
             hipHeight = Mathf.Abs(hipHeight);
-        }
 
-        [ContextMenu("CalcualteTPose")]
-        private void CalculateTPose()
-        {
-            InitializeAnimatorHumanBones();
-            InitializeCharacterTPose();
-            InitializeBoneOffsets();
+            if (characterTPose.Count == 0)
+                Debug.LogError($"Character {this.name} is not set to TPose. Please ensure you assign a valid TPose in Editor before playing", this.transform);
         }
 
         /// <summary>
@@ -89,6 +84,14 @@ namespace Rokoko.Inputs
 
             if (!string.IsNullOrEmpty(profileName))
                 StudioManager.AddActorOverride(this);
+        }
+
+        [ContextMenu("CalcualteTPose")]
+        private void CalculateTPose()
+        {
+            InitializeAnimatorHumanBones();
+            InitializeCharacterTPose();
+            InitializeBoneOffsets();
         }
 
         protected void InitializeCharacterTPose()
@@ -127,19 +130,6 @@ namespace Rokoko.Inputs
 
         #endregion
 
-        private Transform GetBone(HumanBodyBones bone)
-        {
-            switch (boneMapping)
-            {
-                case BoneMappingEnum.Animator:
-                    return animatorHumanBones[bone];
-                case BoneMappingEnum.Custom:
-                    return customBoneMapping.customBodyBones[(int)bone];
-            }
-
-            return null;
-        }
-
         #region Public Methods
 
         /// <summary>
@@ -173,6 +163,22 @@ namespace Rokoko.Inputs
         #endregion
 
         #region Internal Logic
+
+        /// <summary>
+        /// Get Transform from a given HumanBodyBones.
+        /// </summary>
+        private Transform GetBone(HumanBodyBones bone)
+        {
+            switch (boneMapping)
+            {
+                case BoneMappingEnum.Animator:
+                    return animatorHumanBones[bone];
+                case BoneMappingEnum.Custom:
+                    return customBoneMapping.customBodyBones[(int)bone];
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Update Humanoid Skeleton based on BodyData.
@@ -224,14 +230,7 @@ namespace Rokoko.Inputs
                 }
                 else
                 {
-                    boneTransform.position = Quaternion.LookRotation(boneTransform.parent.forward) * worldPosition;
-                    //boneTransform.position = Quaternion.Inverse(boneTransform.parent.rotation) * worldPosition;
-                    //boneTransform.localPosition = worldPosition;
-
-                    // Correct Solution
                     boneTransform.position = boneTransform.parent.rotation * worldPosition + boneTransform.parent.position;
-
-                    //boneTransform.position = worldPosition + boneTransform.parent.position;
                 }
             }
 
@@ -263,17 +262,8 @@ namespace Rokoko.Inputs
             Dictionary<HumanBodyBones, Quaternion> offsets = new Dictionary<HumanBodyBones, Quaternion>();
             foreach (HumanBodyBones bone in RokokoHelper.HumanBodyBonesArray)
             {
-                Quaternion rotation = Quaternion.identity;
-
-                // [TODO] Clean unecessary boneTransform
-                Transform boneTransform = GetBone(bone);
-                if (boneTransform != null)
-                {
-                    // Subtract Root orientation from bone
-                    //Quaternion boneTransform = Quaternion.Inverse(humanoidBones[HumanBodyBones.Hips].parent.rotation) * humanoidBones[bone].rotation;
-                    // Subtract from SmartSuit T Pose
-                    rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * characterTPose[bone];
-                }
+                if (!characterTPose.Contains(bone)) continue;
+                Quaternion rotation = Quaternion.Inverse(SmartsuitTPose[bone]) * characterTPose[bone];
 
                 offsets.Add(bone, rotation);
             }

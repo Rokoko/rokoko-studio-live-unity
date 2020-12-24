@@ -48,5 +48,10 @@ public abstract class SerializableDictionary<TKey, TValue>
         }
     }
 
+    public bool Contains(TKey key)
+    {
+        return keys.Contains(key);
+    }
+
     public int Count => keys.Count;
 }
