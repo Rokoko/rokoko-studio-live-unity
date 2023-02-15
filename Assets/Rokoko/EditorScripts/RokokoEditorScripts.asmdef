@@ -1,0 +1,18 @@
+{
+    "name": "RokokoEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c0283c4bf59b9ad4aa5b4622e1c041a8"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
