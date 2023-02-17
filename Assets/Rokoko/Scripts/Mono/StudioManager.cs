@@ -20,6 +20,9 @@ namespace Rokoko
         [Tooltip("ReceivePort must match Studio Live Stream port settings")]
         public int receivePort = 14043;
 
+        [Tooltip("Use LZ4 compression stream")]
+        public bool useLZ4Compression = true;
+
         [Header("Default Inputs - Used when no overrides found (Optional)")]
         [Tooltip("Actor Prefab to create actors when no overrides found")]
         public Actor actorPrefab;
@@ -56,6 +59,7 @@ namespace Rokoko
         {
             studioReceiver = new StudioReceiver();
             studioReceiver.receivePortNumber = receivePort;
+            studioReceiver.useLZ4Compression = useLZ4Compression;
             studioReceiver.Initialize();
             studioReceiver.StartListening();
             studioReceiver.onStudioDataReceived += StudioReceiver_onStudioDataReceived;

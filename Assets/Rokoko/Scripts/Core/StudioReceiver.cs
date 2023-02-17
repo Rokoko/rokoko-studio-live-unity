@@ -9,6 +9,7 @@ namespace Rokoko.Core
     public class StudioReceiver : UDPReceiver
     {
         public event EventHandler<LiveFrame_v4> onStudioDataReceived;
+        public bool useLZ4Compression = true;
 
         protected override void OnDataReceived(byte[] data, IPEndPoint endPoint)
         {
@@ -16,13 +17,21 @@ namespace Rokoko.Core
             try
             {
                 base.OnDataReceived(data, endPoint);
+                byte[] uncompressed;
 
-                // Decompress LZ4
-                byte[] uncompressed = LZ4Wrapper.Decompress(data);
-                if (uncompressed == null || uncompressed.Length == 0)
+                if (useLZ4Compression)
                 {
-                    Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
-                    return;
+                    // Decompress LZ4
+                    uncompressed = LZ4Wrapper.Decompress(data);
+                    if (uncompressed == null || uncompressed.Length == 0)
+                    {
+                        Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
+                        return;
+                    }    
+                }
+                else
+                {
+                    uncompressed = data;
                 }
 
                 // Convert from Json
