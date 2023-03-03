@@ -23,6 +23,9 @@ namespace Rokoko
         [Tooltip("Use LZ4 compression stream")]
         public bool useLZ4Compression = true;
 
+        [Tooltip("Log the stream frame information")]
+        public bool receiverVerbose = false;
+
         [Header("Default Inputs - Used when no overrides found (Optional)")]
         [Tooltip("Actor Prefab to create actors when no overrides found")]
         public Actor actorPrefab;
@@ -60,6 +63,7 @@ namespace Rokoko
             studioReceiver = new StudioReceiver();
             studioReceiver.receivePortNumber = receivePort;
             studioReceiver.useLZ4Compression = useLZ4Compression;
+            studioReceiver.verbose = receiverVerbose;
             studioReceiver.Initialize();
             studioReceiver.StartListening();
             studioReceiver.onStudioDataReceived += StudioReceiver_onStudioDataReceived;
@@ -121,6 +125,8 @@ namespace Rokoko
         /// </summary>
         private void ProcessLiveFrame(LiveFrame_v4 frame)
         {
+            if (frame?.scene.actors == null)
+                return;
             // Update each actor from live data
             for (int i = 0; i < frame.scene.actors.Length; i++)
             {
@@ -143,26 +149,29 @@ namespace Rokoko
             }
 
             // Update each prop from live data
-            for (int i = 0; i < frame.scene.props.Length; i++)
+            if (frame.scene.props != null)
             {
-                PropFrame propFrame = frame.scene.props[i];
-
-                List<Prop> propOverrides = GetPropOverride(propFrame.name);
-                // Update custom props if any
-                if (propOverrides.Count > 0)
+                for (int i = 0; i < frame.scene.props.Length; i++)
                 {
-                    for (int a = 0; a < propOverrides.Count; a++)
+                    PropFrame propFrame = frame.scene.props[i];
+
+                    List<Prop> propOverrides = GetPropOverride(propFrame.name);
+                    // Update custom props if any
+                    if (propOverrides.Count > 0)
                     {
-                        propOverrides[a].UpdateProp(propFrame);
+                        for (int a = 0; a < propOverrides.Count; a++)
+                        {
+                            propOverrides[a].UpdateProp(propFrame);
+                        }
                     }
-                }
-                // Update default prop
-                else if (autoGenerateInputsWhenNoOverridesFound && props != null)
-                {
-                    props[propFrame.name].UpdateProp(propFrame);
-                }
+                    // Update default prop
+                    else if (autoGenerateInputsWhenNoOverridesFound && props != null)
+                    {
+                        props[propFrame.name].UpdateProp(propFrame);
+                    }
+                }    
             }
-
+            
             // Remove all default Actors that doesn't exist in data 
             ClearUnusedDefaultInputs(frame);
 
