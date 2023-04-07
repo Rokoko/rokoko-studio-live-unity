@@ -27,17 +27,21 @@ namespace Rokoko.CommandAPI
         public async void RestartSmartsuit()
             => await SendRequest("Restart", GetRequestData().ToJson());
 
+        [ContextMenu("Reset Actor")]
+        public async void ResetActor()
+            => await SendRequest("resetactor", GetResetActorRequestData().ToJson());
+
         [ContextMenu("Start Recording")]
         public async void StartRecording() =>
-            await SendRequest("recording/start", new RequestData { }.ToJson());
+            await SendRequest("recording/start", GetRecordingRequestData().ToJson());
 
         [ContextMenu("Stop Recording")]
         public async void StopRecording() =>
-            await SendRequest("recording/stop", new RequestData { }.ToJson());
+            await SendRequest("recording/stop", GetRecordingRequestData().ToJson());
 
         [ContextMenu("Calibrate all")]
         public async void CalibrateAll() =>
-            await SendRequest("calibrate", GetRequestData().ToJson());
+            await SendRequest("calibrate", GetCalibrateRequestData().ToJson());
 
         [ContextMenu("Unicast")]
         public async void Unicast() =>
@@ -55,6 +59,9 @@ namespace Rokoko.CommandAPI
         }
 
         protected abstract RequestData GetRequestData();
+        protected abstract CalibrateRequestData GetCalibrateRequestData();
+        protected abstract ResetActorRequestData GetResetActorRequestData();
+        protected abstract RecordingRequestData GetRecordingRequestData();
 
         private IEnumerator SendRequestEnum(string endpoint, string json, TaskCompletionSource<string> task)
         {
