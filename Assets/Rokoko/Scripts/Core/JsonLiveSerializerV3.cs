@@ -20,6 +20,7 @@ namespace Rokoko.Core
     {
         public float timestamp;
         public ActorFrame[] actors;
+        public CharacterFrame[] characters;
         public PropFrame[] props;
     }
 
@@ -53,6 +54,13 @@ namespace Rokoko.Core
     }
 
     [System.Serializable]
+    public class CharacterFrame
+    {
+        public string name;
+        public CharacterJointFrame[] joints;
+    }
+
+    [System.Serializable]
     public class PropFrame
     {
         public string name;
@@ -61,6 +69,7 @@ namespace Rokoko.Core
         public Vector3Frame position;
         public Vector4Frame rotation;
     }
+
 
     [System.Serializable]
     public class BodyFrame
@@ -225,6 +234,14 @@ namespace Rokoko.Core
     [System.Serializable]
     public struct ActorJointFrame
     {
+        public Vector3Frame position;
+        public Vector4Frame rotation;
+    }
+
+    [System.Serializable]
+    public struct CharacterJointFrame
+    {
+        public string name;
         public Vector3Frame position;
         public Vector4Frame rotation;
     }

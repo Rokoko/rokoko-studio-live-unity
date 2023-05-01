@@ -29,6 +29,8 @@ namespace Rokoko
         [Header("Default Inputs - Used when no overrides found (Optional)")]
         [Tooltip("Actor Prefab to create actors when no overrides found")]
         public Actor actorPrefab;
+        [Tooltip("Character Prefab to create characters when no overrides found")]
+        public Character characterPrefab;
         [Tooltip("Prop Prefab to create props when no overrides found")]
         public Prop propPrefab;
 
@@ -37,6 +39,7 @@ namespace Rokoko
 
         [Header("Input Overrides - Automatically updated")]
         public List<Actor> actorOverrides = new List<Actor>();
+        public List<Character> characterOverrides = new List<Character>();
         public List<Prop> propOverrides = new List<Prop>();
 
         [Header("Extra Behiavours")]
@@ -45,9 +48,11 @@ namespace Rokoko
 
         private StudioReceiver studioReceiver;
         private PrefabInstancer<string, Actor> actors;
+        private PrefabInstancer<string, Character> characters;
         private PrefabInstancer<string, Prop> props;
 
-        private List<Action> actionsOnMainThread = new List<Action>();
+        private object actionsOnMainThread = new object();
+        private List<LiveFrame_v4> packetsToProcess = new List<LiveFrame_v4>();
 
         #region MonoBehaviour
 
@@ -70,13 +75,14 @@ namespace Rokoko
 
             if (actorPrefab != null)
                 actors = new PrefabInstancer<string, Actor>(actorPrefab, this.transform);
-
+            if (characterPrefab != null)
+                characters = new PrefabInstancer<string, Character>(characterPrefab, this.transform);
             if (propPrefab != null)
                 props = new PrefabInstancer<string, Prop>(propPrefab, this.transform);
 
             yield return null;
 
-            if (actorOverrides.Count == 0)
+            if (actorOverrides.Count == 0 && characterOverrides.Count == 0)
             {
                 Debug.Log("No custom characters found. Will generate scene from default ones");
             }
@@ -87,11 +93,11 @@ namespace Rokoko
             // Run all actions inside Unity's main thread
             lock (actionsOnMainThread)
             {
-                for (int i = 0; i < actionsOnMainThread.Count; i++)
+                if (packetsToProcess.Count > 0)
                 {
-                    actionsOnMainThread[i]();
+                    ProcessLiveFrame(packetsToProcess[packetsToProcess.Count-1]);    
+                    packetsToProcess.Clear();
                 }
-                actionsOnMainThread.Clear();
             }
         }
 
@@ -102,22 +108,10 @@ namespace Rokoko
 
         #endregion
 
-        /// <summary>
-        /// Store actions to run on Unity's main thread
-        /// </summary>
-        private void RunOnMainThread(Action action)
-        {
-            lock (actionsOnMainThread)
-                actionsOnMainThread.Add(action);
-        }
-
         private void StudioReceiver_onStudioDataReceived(object sender, LiveFrame_v4 e)
         {
-            // Process in Unity thread
-            RunOnMainThread(() =>
-            {
-                ProcessLiveFrame(e);
-            });
+            lock (actionsOnMainThread)
+                packetsToProcess.Add(e);
         }
 
         /// <summary>
@@ -125,10 +119,14 @@ namespace Rokoko
         /// </summary>
         private void ProcessLiveFrame(LiveFrame_v4 frame)
         {
-            if (frame?.scene.actors == null)
+            int numberOfActors = frame?.scene.actors?.Length ?? 0;
+            int numberOfCharacters = frame?.scene.characters?.Length ?? 0;
+            
+            if (numberOfActors == 0 && numberOfCharacters == 0)
                 return;
+
             // Update each actor from live data
-            for (int i = 0; i < frame.scene.actors.Length; i++)
+            for (int i = 0; i < numberOfActors; i++)
             {
                 ActorFrame actorFrame = frame.scene.actors[i];
 
@@ -145,6 +143,27 @@ namespace Rokoko
                 else if (autoGenerateInputsWhenNoOverridesFound && actors != null)
                 {
                     actors[actorFrame.name].UpdateActor(actorFrame);
+                }
+            }
+
+            // Update each character from live data
+            for (int i = 0; i < numberOfCharacters; i++)
+            {
+                CharacterFrame charFrame = frame.scene.characters[i];
+
+                List<Character> characterOverrides = GetCharacterOverride(charFrame.name);
+                // Update custom characters if any
+                if (characterOverrides.Count > 0)
+                {
+                    for (int a = 0; a < characterOverrides.Count; a++)
+                    {
+                        characterOverrides[a].UpdateCharacter(charFrame);
+                    }
+                }
+                // Update default character
+                else if (autoGenerateInputsWhenNoOverridesFound && characters != null)
+                {
+                    characters[charFrame.name].UpdateCharacter(charFrame);
                 }
             }
 
@@ -188,9 +207,10 @@ namespace Rokoko
         private void UpdateDefaultActorWhenIdle()
         {
             if (!showDefaultActorWhenNoData) return;
-            if (actors == null || props == null) return;
+            if (actors == null || props == null) // || characters == null) 
+                return;
 
-            // Crate default actor
+            // Create default actor
             if (actors.Count == 0 && props.Count == 0)
             {
                 actors[ACTOR_DEMO_IDLE_NAME].CreateIdle(ACTOR_DEMO_IDLE_NAME);
@@ -224,6 +244,18 @@ namespace Rokoko
                 }
             }
 
+            if (characters != null)
+            {
+                foreach (Character character in new List<Character>((IEnumerable<Character>)characters.Values))
+                {
+                    // Don't remove idle demo
+                    if (character.profileName == ACTOR_DEMO_IDLE_NAME) continue;
+
+                    if (!frame.HasCharacter(character.profileName))
+                        characters.Remove(character.profileName);
+                }
+            }
+
             if (props != null)
             {
                 foreach (Prop prop in new List<Prop>((IEnumerable<Prop>)props.Values))
@@ -245,6 +277,17 @@ namespace Rokoko
             return overrides;
         }
 
+        public List<Character> GetCharacterOverride(string profileName)
+        {
+            List<Character> overrides = new List<Character>();
+            for (int i = 0; i < characterOverrides.Count; i++)
+            {
+                if (profileName.ToLower() == characterOverrides[i].profileName.ToLower())
+                    overrides.Add(characterOverrides[i]);
+            }
+            return overrides;
+        }
+
         public List<Prop> GetPropOverride(string profileName)
         {
             List<Prop> overrides = new List<Prop>();
@@ -261,6 +304,13 @@ namespace Rokoko
             if (instance == null) return;
             if (instance.actorOverrides.Contains(actor)) return;
             instance.actorOverrides.Add(actor);
+        }
+
+        public static void AddCharacterOverride(Character character)
+        {
+            if (instance == null) return;
+            if (instance.characterOverrides.Contains(character)) return;
+            instance.characterOverrides.Add(character);
         }
 
         public static void AddPropOverride(Prop prop)

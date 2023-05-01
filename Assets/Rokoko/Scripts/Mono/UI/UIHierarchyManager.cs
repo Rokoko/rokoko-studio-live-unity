@@ -41,6 +41,19 @@ namespace Rokoko.UI
                 rows[profileName].UpdateRow(actorFrame);
             }
 
+            // Update each actor from live data
+            for (int i = 0; i < dataFrame.scene.characters.Length; i++)
+            {
+                CharacterFrame charFrame = dataFrame.scene.characters[i];
+                string profileName = charFrame.name;
+                
+                // If profile doesn't exist, mark for rebuild
+                if (forceLayoutUpdate == false && !rows.ContainsKey(profileName))
+                    forceLayoutUpdate = true;
+
+                rows[profileName].UpdateRow(charFrame);
+            }
+
             // Update each prop from live data
             for (int i = 0; i < dataFrame.scene.props.Length; i++)
             {
@@ -67,7 +80,7 @@ namespace Rokoko.UI
         {
             foreach (InputHierarchyRow row in new List<InputHierarchyRow>((IEnumerable<InputHierarchyRow>)rows.Values))
             {
-                if (!frame.HasProfile(row.profileName) && !frame.HasProp(row.profileName))
+                if (!frame.HasProfile(row.profileName) && !frame.HasProp(row.profileName) && !frame.HasCharacter(row.profileName))
                     rows.Remove(row.profileName);
             }
         }

@@ -48,9 +48,16 @@ namespace Rokoko.Core
                     Debug.LogError("Incoming data are in bad format. Please ensure you are using JSON v3 as forward data format");
                     return;
                 }
-                if (verbose && (liveFrame_V4.scene.actors == null || liveFrame_V4.scene.actors.Length == 0))
+
+                if (verbose)
                 {
-                    Debug.LogError("Incoming data has no actors in the stream");
+                    int numberOfActors = (liveFrame_V4.scene.actors != null) ? liveFrame_V4.scene.actors.Length : 0;
+                    int numberOfChars = (liveFrame_V4.scene.characters != null) ? liveFrame_V4.scene.characters.Length : 0;
+
+                    if (numberOfActors == 0 && numberOfChars == 0)
+                    {
+                        Debug.LogError("Incoming data has no actors and no characters in the stream");
+                    }
                 }
             }
             catch { }

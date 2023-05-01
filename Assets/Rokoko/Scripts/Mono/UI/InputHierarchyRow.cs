@@ -40,6 +40,16 @@ namespace Rokoko.UI
             rightGloveImage.color = actorFrame.meta.hasRightGlove ? Color.white : inactiveColor;
         }
 
+        public void UpdateRow(CharacterFrame charFrame)
+        {
+            actorPanel.SetActive(false);
+            propPanel.SetActive(true);
+
+            profileName = charFrame.name;
+            //propImage.color = propFrame.color.ToColor();
+            propText.text = charFrame.name;
+        }
+
         public void UpdateRow(PropFrame propFrame)
         {
             actorPanel.SetActive(false);
