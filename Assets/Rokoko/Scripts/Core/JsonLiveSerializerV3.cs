@@ -242,6 +242,7 @@ namespace Rokoko.Core
     public struct CharacterJointFrame
     {
         public string name;
+        public int parent; //!< parent index in a chracter frame joints array (-1 for the root)
         public Vector3Frame position;
         public Vector4Frame rotation;
     }
