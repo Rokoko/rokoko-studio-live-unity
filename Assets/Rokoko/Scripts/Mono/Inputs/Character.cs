@@ -11,13 +11,6 @@ namespace Rokoko.Inputs
     public class Character : MonoBehaviour
     {
         [System.Serializable]
-        public enum BoneMappingEnum
-        {
-            Animator,
-            Custom
-        }
-
-        [System.Serializable]
         public enum RotationSpace
         {
             Offset,
@@ -25,18 +18,16 @@ namespace Rokoko.Inputs
             Self
         }
 
-        //[HideInInspector] 
+        [HideInInspector] 
         public string profileName = "";
 
-        [HideInInspector] public BoneMappingEnum boneMapping;
         [HideInInspector] public Animator animator;
-        [HideInInspector] public HumanBoneMapping customBoneMapping;
 
         [Header("Convert Space")]
         [Tooltip("Convert Studio data to Unity position space")]
-        public Space positionSpace = Space.Self;
+        public Space positionSpace = Space.World;
         [Tooltip("Convert Studio data to Unity rotation space")]
-        public RotationSpace rotationSpace = RotationSpace.Offset;
+        public RotationSpace rotationSpace = RotationSpace.World;
 
         [Space(10)]
         [Tooltip("Calculate Model's height comparing to Actor's and position the Hips accordingly.\nGreat tool to align with the floor")]
@@ -77,6 +68,9 @@ namespace Rokoko.Inputs
             Transform[] transforms = GetComponentsInChildren<Transform>();
             for (int i=0; i<transforms.Length; ++i)
             {
+                if (transforms[i].GetComponentInChildren<SkinnedMeshRenderer>() != null)
+                    continue;
+
                 _skeletonJoints.Add(transforms[i].name, transforms[i]);
             }
         }
@@ -108,6 +102,15 @@ namespace Rokoko.Inputs
 
             // Update skeleton from data
             UpdateSkeleton(frame);
+
+            if (frame.blendshapes != null && frame.blendshapes.names != null && frame.blendshapes.names.Length > 0)
+            {
+                face?.UpdateFace(frame.blendshapes.names, frame.blendshapes.values);    
+            }
+            else
+            {
+                Debug.LogError($"Character {this.name} face is empty");
+            }
         }
 
         /// <summary>

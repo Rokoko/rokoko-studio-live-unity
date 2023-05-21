@@ -58,6 +58,14 @@ namespace Rokoko.Core
     {
         public string name;
         public CharacterJointFrame[] joints;
+        public BlendshapesFrame blendshapes;
+    }
+
+    [System.Serializable]
+    public class BlendshapesFrame
+    {
+        public string[] names;
+        public float[] values;
     }
 
     [System.Serializable]

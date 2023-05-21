@@ -71,6 +71,26 @@ namespace Rokoko.Inputs
             }
         }
 
+        public void UpdateFace(string[] names, float[] blendshapeValues)
+        {
+            if (meshRenderer == null) return;
+
+            for (int i = 0; i < names.Length; ++i)
+            {
+                // Get blendshape name
+                string blendShapeName = names[i];
+
+                int blendshapeIndex = GetBlendshapeIndex(blendShapeName);
+                if (blendshapeIndex >= 0)
+                    meshRenderer.SetBlendShapeWeight(blendshapeIndex, blendshapeValues[i]);
+                else
+                {
+                    if (debug)
+                        Debug.LogWarning($"Couldn't find blendshape name:{blendShapeName} in Mesh blendshapes (count:{meshRenderer.sharedMesh.blendShapeCount})", this.transform);
+                }
+            }
+        }
+
         private int GetBlendshapeIndex(string blendshape)
         {
             foreach (string blendshapeKey in blendshapeNamesToIndex.Keys)
