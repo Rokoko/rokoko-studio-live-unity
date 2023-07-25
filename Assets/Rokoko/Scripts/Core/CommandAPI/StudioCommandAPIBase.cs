@@ -22,6 +22,8 @@ namespace Rokoko.CommandAPI
 
         protected abstract string IP { get; }
 
+        public bool IsTrackerRequestInProgress = false;
+
         
         [ContextMenu("Restart Smartsuit")]
         public async void RestartSmartsuit()
@@ -51,6 +53,10 @@ namespace Rokoko.CommandAPI
         public async void Broadcast() =>
             await SendRequest("broadcast", GetRequestData().ToJson());
 
+        [ContextMenu("Tracker")]
+        public async void Tracker() =>
+            await SendRequest("tracker", GetTrackerRequestData().ToJson());
+
         private Task<string> SendRequest(string endpoint, string json)
         {
             var tcs = new TaskCompletionSource<string>();
@@ -62,11 +68,13 @@ namespace Rokoko.CommandAPI
         protected abstract CalibrateRequestData GetCalibrateRequestData();
         protected abstract ResetActorRequestData GetResetActorRequestData();
         protected abstract RecordingRequestData GetRecordingRequestData();
+        protected abstract TrackerRequestData GetTrackerRequestData();
 
         private IEnumerator SendRequestEnum(string endpoint, string json, TaskCompletionSource<string> task)
         {
-            Dictionary<string, string> postHeader = new Dictionary<string, string>();
-            postHeader.Add("Content-Type", "application/json");
+            IsTrackerRequestInProgress = true;
+            //Dictionary<string, string> postHeader = new Dictionary<string, string>();
+            //postHeader.Add("Content-Type", "application/json");
             string url = $"http://{IP}:{port}/v1/{apiKey}/{endpoint}";
             if (debug)
             {
@@ -84,19 +92,22 @@ namespace Rokoko.CommandAPI
             yield return request.SendWebRequest();
 
             string body = request.downloadHandler.text;
-            if (request.isNetworkError)
-            {
-                if (debug)
-                    Debug.LogWarning($"There was an error sending request: {request.error}\n{body}", this.transform);
-                OnCommmandError(request.error);
-            }
-            else
+            if (request.result != UnityWebRequest.Result.ConnectionError)
             {
                 if (debug)
                     Debug.Log($"Response: {request.responseCode}: {body}", this.transform);
                 OnCommmandResponse(JsonUtility.FromJson<ResponseMessage>(body));
             }
+            else
+            {
+                if (debug)
+                    Debug.LogWarning($"There was an error sending request: {request.error}\n{body}", this.transform);
+                OnCommmandError(request.error);
+            }
             task.SetResult(body);
+            request.Dispose();
+            uploadHandler.Dispose();
+            IsTrackerRequestInProgress = false;
         }
 
         protected virtual void OnCommmandResponse(ResponseMessage response)
@@ -115,5 +126,7 @@ namespace Rokoko.CommandAPI
     {
         public string description;
         public string response_code;
+        public long startTime;
+        public dynamic[] parameters;
     }
 }

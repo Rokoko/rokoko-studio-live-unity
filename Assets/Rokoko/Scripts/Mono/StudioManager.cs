@@ -1,5 +1,6 @@
 ﻿using Rokoko;
 using Rokoko.Core;
+using Rokoko.CommandAPI;
 using Rokoko.Helper;
 using Rokoko.Inputs;
 using Rokoko.UI;
@@ -36,6 +37,10 @@ namespace Rokoko
 
         [Header("UI (Optional)")]
         public UIHierarchyManager uiManager;
+
+        [Header("Command API (Optional)")]
+        public StudioCommandAPI CommandAPI;
+        public bool AutoSendTrackerCommands;
 
         [Header("Input Overrides - Automatically updated")]
         public List<Actor> actorOverrides = new List<Actor>();
@@ -97,6 +102,17 @@ namespace Rokoko
                 {
                     ProcessLiveFrame(packetsToProcess[packetsToProcess.Count-1]);    
                     packetsToProcess.Clear();
+                }
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (AutoSendTrackerCommands && CommandAPI != null)
+            {
+                if (!CommandAPI.IsTrackerRequestInProgress)
+                {
+                    CommandAPI.Tracker();    
                 }
             }
         }

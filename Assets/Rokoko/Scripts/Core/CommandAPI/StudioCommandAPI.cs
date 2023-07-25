@@ -11,10 +11,11 @@ namespace Rokoko.CommandAPI
         [Header("The IP address of Studio. Leave default for same machine")]
         public string ipAddress = "127.0.0.1";
 
-        [Header("Command Input Parameters")]
+        [Header("Common Parameters")]        
         [Tooltip("The actor name or hardware device id in the scene")]
         [SerializeField] public string deviceId;
 
+        [Header("Calibration Parameters")]
         [Tooltip("The calibration countdown delay")]
         [SerializeField] public int countDownDelay = 3;
 
@@ -24,6 +25,7 @@ namespace Rokoko.CommandAPI
         [Tooltip("The calibration skip gloves")]
         [SerializeField] public bool calibrationSkipGloves = false;
 
+        [Header("Recording Parameters")]
         [Tooltip("Recording Clip Name")]
         [SerializeField] public string clipName = "NewClip";
 
@@ -33,12 +35,22 @@ namespace Rokoko.CommandAPI
         [Tooltip("Return To Live Mode When Recording Is Done")]
         [SerializeField] public bool backToLive = false;
 
+        [Header("Tracker Parameters")]
+        [SerializeField] public string BoneAttached = "";
+        [SerializeField] public float TrackerTimeout = 2f;
+        [SerializeField] public bool IsQueryOnly = false;
+
+        [SerializeField] public Transform TrackerTransform;
+
         protected override string IP => ipAddress;
         protected override RequestData GetRequestData() => new RequestData();
         protected override ResetActorRequestData GetResetActorRequestData() 
         {
             var data = new ResetActorRequestData() {DeviceId = deviceId};
-            Debug.Log(data.ToJson());
+            if (debug)
+            {
+                Debug.Log(data.ToJson());    
+            }
             return data;
         }
 
@@ -51,7 +63,10 @@ namespace Rokoko.CommandAPI
                 SkipSuit = calibrationSkipSuit,
                 SkipGloves = calibrationSkipGloves
             };
-            Debug.Log(data.ToJson());
+            if (debug)
+            {
+                Debug.Log(data.ToJson());    
+            }
             return data;
         }
 
@@ -63,7 +78,28 @@ namespace Rokoko.CommandAPI
                 Time = recordingTime,
                 BackToLive = backToLive
             };
-            Debug.Log(data.ToJson());
+            if (debug)
+            {
+                Debug.Log(data.ToJson());    
+            }
+            return data;
+        }
+
+        protected override TrackerRequestData GetTrackerRequestData()
+        {
+            var data = new TrackerRequestData()
+            {
+                DeviceId = deviceId,
+                BoneAttached = BoneAttached,
+                Position = TrackerTransform?.position ?? Vector3.zero,
+                Rotation = TrackerTransform?.rotation ?? Quaternion.identity,
+                Timeout = TrackerTimeout,
+                IsQueryOnly = IsQueryOnly
+            };
+            if (debug)
+            {
+                Debug.Log(data.ToJson());    
+            }
             return data;
         }
 
