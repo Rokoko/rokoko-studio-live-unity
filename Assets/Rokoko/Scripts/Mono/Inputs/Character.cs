@@ -53,12 +53,6 @@ namespace Rokoko.Inputs
                 //return;
             }
 
-            if (animator != null && !animator.isHuman)
-            {
-                Debug.LogError("Model is not marked as Humanoid. Please go in model inspector, under Rig tab and select AnimationType as Humanoid.", this.transform);
-                //return;
-            }
-
             InitializeSkeletonJoints();
         }
 
