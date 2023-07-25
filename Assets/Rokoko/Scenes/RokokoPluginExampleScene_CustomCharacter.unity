@@ -152,7 +152,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &492457762
 GameObject:
@@ -220,8 +220,53 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &503736321 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+  m_PrefabInstance: {fileID: 1333060479}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &503736322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503736321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b7631c1f06f4144abfa5da7ebc0f80c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profileName: SK_Mannequin
+  animator: {fileID: 503736323}
+  positionSpace: 0
+  rotationSpace: 1
+  adjustHipHeightBasedOnStudioActor: 0
+  hipsName: pelvis
+  face: {fileID: 0}
+  debug: 0
+--- !u!95 &503736323
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503736321}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &632906617
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +299,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!81 &632906619
 AudioListener:
@@ -349,7 +394,7 @@ Transform:
   - {fileID: 1104559583}
   - {fileID: 1884284896}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &710884373
 GameObject:
@@ -381,7 +426,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &710884377
 MonoBehaviour:
@@ -406,7 +451,7 @@ MonoBehaviour:
   AutoSendTrackerCommands: 0
   actorOverrides: []
   characterOverrides:
-  - {fileID: 0}
+  - {fileID: 503736322}
   propOverrides: []
   autoGenerateInputsWhenNoOverridesFound: 0
   showDefaultActorWhenNoData: 0
@@ -681,7 +726,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 226731929282440247, guid: 3e7a0bccb581d8945b546f992a7871f4, type: 3}
       propertyPath: profileName
-      value: Sergei
+      value: Newton
       objectReference: {fileID: 0}
     - target: {fileID: 226731929282440247, guid: 3e7a0bccb581d8945b546f992a7871f4, type: 3}
       propertyPath: isValidTpose
@@ -1819,6 +1864,63 @@ Transform:
   m_Father: {fileID: 741147618}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1333060479
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.7550678
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00010025501
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.4776492
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
+      propertyPath: m_Name
+      value: SK_Mannequin
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 40fd95e5269eaed43aa67d80baa8c786, type: 3}
 --- !u!1 &1884284895
 GameObject:
   m_ObjectHideFlags: 0
