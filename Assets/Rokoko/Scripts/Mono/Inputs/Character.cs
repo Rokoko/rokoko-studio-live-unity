@@ -29,6 +29,12 @@ namespace Rokoko.Inputs
         [Tooltip("Convert Studio data to Unity rotation space")]
         public RotationSpace rotationSpace = RotationSpace.World;
 
+        [Tooltip("A rotation pre rotation applied")]
+        public Vector3 PreRotation = new Vector3(0.0f, 0.0f, 0.0f);
+
+        [Tooltip("A rotation post rotation applied")]
+        public Vector3 PostRotation = new Vector3(0.0f, 0.0f, 0.0f);
+
         [Space(10)]
         [Tooltip("Calculate Model's height comparing to Actor's and position the Hips accordingly.\nGreat tool to align with the floor")]
         public bool adjustHipHeightBasedOnStudioActor = false;
@@ -101,9 +107,9 @@ namespace Rokoko.Inputs
             {
                 face?.UpdateFace(frame.blendshapes.names, frame.blendshapes.values);    
             }
-            else
+            else if (debug)
             {
-                Debug.LogError($"Character {this.name} face is empty");
+                Debug.LogError($"Character {this.name} face has no blendshapes");
             }
         }
 
@@ -160,7 +166,7 @@ namespace Rokoko.Inputs
             // Update Rotation
             if (rotationSpace == RotationSpace.World)
             {
-                boneTransform.rotation = worldRotation;
+                boneTransform.rotation = Quaternion.Euler(PreRotation.x, PreRotation.y, PreRotation.z) * worldRotation * Quaternion.Euler(PostRotation.x, PostRotation.y, PostRotation.z);
             }
             else if (rotationSpace == RotationSpace.Self)
             {

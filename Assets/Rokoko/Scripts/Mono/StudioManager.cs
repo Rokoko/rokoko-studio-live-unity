@@ -298,6 +298,9 @@ namespace Rokoko
             List<Character> overrides = new List<Character>();
             for (int i = 0; i < characterOverrides.Count; i++)
             {
+                if (characterOverrides[i] == null)
+                    continue;
+
                 if (profileName.ToLower() == characterOverrides[i].profileName.ToLower())
                     overrides.Add(characterOverrides[i]);
             }
