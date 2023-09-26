@@ -183,6 +183,19 @@ namespace Rokoko.Helper
         }
 
         /// <summary>
+        /// Check if character name is present in live data
+        /// </summary>
+        public static bool HasCharacter(this LiveFrame_v4 frame, string profileName)
+        {
+            for (int i = 0; i < frame.scene.characters.Length; i++)
+            {
+                if (frame.scene.characters[i].name == profileName)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Check if prop name is present in live data
         /// </summary>
         public static bool HasProp(this LiveFrame_v4 frame, string propName)

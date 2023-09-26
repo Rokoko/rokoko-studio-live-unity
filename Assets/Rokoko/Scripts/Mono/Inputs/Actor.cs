@@ -39,7 +39,7 @@ namespace Rokoko.Inputs
 
         [Space(10)]
         [Tooltip("Calculate Model's height comparing to Actor's and position the Hips accordingly.\nGreat tool to align with the floor")]
-        public bool adjustHipHeightBasedOnStudioActor = true;
+        public bool adjustHipHeightBasedOnStudioActor = false;
 
         [HideInInspector] public Face face = null;
 

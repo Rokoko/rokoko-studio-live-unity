@@ -403,7 +403,7 @@ MonoBehaviour:
   propPrefab: {fileID: 3055574581867789888, guid: 1b1f12af1c3d2fa4bb2cd58a1aa78db5, type: 3}
   uiManager: {fileID: 5056128649992050367}
   CommandAPI: {fileID: 7734118760138449597}
-  AutoSendTrackerCommands: 0
+  AutoSendTrackerCommands: 1
   actorOverrides: []
   characterOverrides:
   - {fileID: 0}
@@ -681,7 +681,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 226731929282440247, guid: 3e7a0bccb581d8945b546f992a7871f4, type: 3}
       propertyPath: profileName
-      value: Sergei
+      value: Newton
       objectReference: {fileID: 0}
     - target: {fileID: 226731929282440247, guid: 3e7a0bccb581d8945b546f992a7871f4, type: 3}
       propertyPath: isValidTpose

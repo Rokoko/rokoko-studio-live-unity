@@ -22,23 +22,9 @@ namespace Rokoko.CommandAPI
 
         protected abstract string IP { get; }
 
-        
-        [ContextMenu("Restart Smartsuit")]
-        public async void RestartSmartsuit()
-            => await SendRequest("Restart", GetRequestData().ToJson());
+        public bool IsTrackerRequestInProgress = false;
 
-        [ContextMenu("Start Recording")]
-        public async void StartRecording() =>
-            await SendRequest("recording/start", new RequestData { }.ToJson());
-
-        [ContextMenu("Stop Recording")]
-        public async void StopRecording() =>
-            await SendRequest("recording/stop", new RequestData { }.ToJson());
-
-        [ContextMenu("Calibrate all")]
-        public async void CalibrateAll() =>
-            await SendRequest("calibrate", GetRequestData().ToJson());
-
+        // legacy only commands 
         [ContextMenu("Unicast")]
         public async void Unicast() =>
             await SendRequest("unicast", GetRequestData().ToJson());
@@ -46,6 +32,47 @@ namespace Rokoko.CommandAPI
         [ContextMenu("Broadcast")]
         public async void Broadcast() =>
             await SendRequest("broadcast", GetRequestData().ToJson());
+
+        [ContextMenu("Restart Smartsuit")]
+        public async void RestartSmartsuit()
+            => await SendRequest("Restart", GetRequestData().ToJson());
+
+        // commands that are compatible with Studio and Studio Legacy
+
+        [ContextMenu("Start Recording")]
+        public async void StartRecording() =>
+            await SendRequest("recording/start", GetRecordingRequestData().ToJson());
+
+        [ContextMenu("Stop Recording")]
+        public async void StopRecording() =>
+            await SendRequest("recording/stop", GetRecordingRequestData().ToJson());
+
+        [ContextMenu("Calibrate all")]
+        public async void CalibrateAll() =>
+            await SendRequest("calibrate", GetCalibrateRequestData().ToJson());
+
+        [ContextMenu("Reset Actor")]
+        public async void ResetActor()
+            => await SendRequest("resetactor", GetResetActorRequestData().ToJson());
+
+        // commands which are not presented in Studio Legacy
+
+        [ContextMenu("Tracker")]
+        public async void Tracker() =>
+            await SendRequest("tracker", GetTrackerRequestData().ToJson());
+
+        [ContextMenu("Info")]
+        public async void Info() =>
+            await SendRequest("info", GetInfoRequestData().ToJson());
+
+        [ContextMenu("Playback")]
+        public async void PlaybackPlay() =>
+            await SendRequest("playback", GetPlaybackRequestData().ToJson());
+
+        [ContextMenu("Livestream")]
+        public async void ToggleLiveStream() =>
+            await SendRequest("livestream", GetLivestreamRequestData().ToJson());
+
 
         private Task<string> SendRequest(string endpoint, string json)
         {
@@ -55,11 +82,18 @@ namespace Rokoko.CommandAPI
         }
 
         protected abstract RequestData GetRequestData();
+        protected abstract CalibrateRequestData GetCalibrateRequestData();
+        protected abstract ResetActorRequestData GetResetActorRequestData();
+        protected abstract RecordingRequestData GetRecordingRequestData();
+        protected abstract TrackerRequestData GetTrackerRequestData();
+        protected abstract PlaybackRequestData GetPlaybackRequestData();
+        protected abstract LivestreamRequestData GetLivestreamRequestData();
+        protected abstract InfoRequestData GetInfoRequestData();
 
         private IEnumerator SendRequestEnum(string endpoint, string json, TaskCompletionSource<string> task)
         {
-            Dictionary<string, string> postHeader = new Dictionary<string, string>();
-            postHeader.Add("Content-Type", "application/json");
+            IsTrackerRequestInProgress = true;
+            
             string url = $"http://{IP}:{port}/v1/{apiKey}/{endpoint}";
             if (debug)
             {
@@ -77,19 +111,22 @@ namespace Rokoko.CommandAPI
             yield return request.SendWebRequest();
 
             string body = request.downloadHandler.text;
-            if (request.isNetworkError)
-            {
-                if (debug)
-                    Debug.LogWarning($"There was an error sending request: {request.error}\n{body}", this.transform);
-                OnCommmandError(request.error);
-            }
-            else
+            if (request.result != UnityWebRequest.Result.ConnectionError)
             {
                 if (debug)
                     Debug.Log($"Response: {request.responseCode}: {body}", this.transform);
                 OnCommmandResponse(JsonUtility.FromJson<ResponseMessage>(body));
             }
+            else
+            {
+                if (debug)
+                    Debug.LogWarning($"There was an error sending request: {request.error}\n{body}", this.transform);
+                OnCommmandError(request.error);
+            }
             task.SetResult(body);
+            request.Dispose();
+            uploadHandler.Dispose();
+            IsTrackerRequestInProgress = false;
         }
 
         protected virtual void OnCommmandResponse(ResponseMessage response)
@@ -108,5 +145,7 @@ namespace Rokoko.CommandAPI
     {
         public string description;
         public string response_code;
+        public long startTime;
+        public dynamic[] parameters;
     }
 }
