@@ -11,9 +11,8 @@ The minimum officially supported version of Unity is 2018.4.x LTS. Although it h
 
 ## Features
 - Live stream data:
-  * Up to five actors that can all include all body, face (52 blendshapes) and finger data at the same time.
-  * Camera data
-  * Props data
+  * Up to five actors that
+  * Can all include body, face (52 blendshapes) and finger data at the same time.
 - Control Rokoko Studio from within Unity
 
 ---
